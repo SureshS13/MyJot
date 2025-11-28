@@ -1,3 +1,4 @@
+/* Remove default paragraph margin-bottom to achieve tighter spacing between elements */
 p {
     margin-bottom: 0;
 }

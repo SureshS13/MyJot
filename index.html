@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Log</title>
+
+    <!-- Custom metadata: defines page-specific CSS and JS resources to load via a comma‑separated list. Failures are unhandled to ensure fast failure -->
+    <meta data-custom-stylesheets="css/site/fileLoad/fileLoad.css">
+    <meta data-custom-scripts="js/site/fileLoad/fileLoadScripts.js">
+
+    <title>File Load</title>
 
     <!-- Import all static app utilities to use on the page -->
     <script type="module" src="/js/site/shared/SharedAppUtilities.js"></script>
 
-    <!-- 
-        Import the shared app setup script to dynamically add the necessary      
-        site CSS/JS and vendor CSS/JS to the document head.
-    -->
+    <!-- Import the shared app setup script to dynamically add the necessary site CSS/JS and vendor CSS/JS to the document head. -->
     <script type="module" src="/js/site/shared/SharedAppSetup.js"></script>
   </head>
   <body>
@@ -25,7 +27,7 @@
         <h6>Hi</h6>
         <p>Hi</p>
         <small>Hi</small>
-        <p> You just finshed adding the font, you should now push you progress to GitHub and then add the font import for inter italic, and look into font pairings, then start dev on the navbar for desktop and mobile. At some point add polished comments and JSdoc to everything, and organize the styles in baseStyles.css </p>
+        <p> You just expanding the functionality to append more than one custom JS script or CSS stylesheet to specific pages. You should now look into font pairings, then start dev on the navbar for desktop and mobile. </p>
     </div>
   </body>
 </html>

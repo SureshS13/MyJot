@@ -4,9 +4,10 @@
 import { createHTMLElement } from "/js/site/shared/SharedAppUtilities.js"
 
 /*******************************************************/
-/* Const & let variable declarations * initializations */
+/* Const & let variable declarations & initializations */
 /*******************************************************/
-const pageTitle = document.head.querySelector("title").textContent;
+const customStylesheetsMetaTag = document.querySelector("[data-custom-stylesheets]");
+const customScriptsMetaTag = document.querySelector("[data-custom-scripts]");
 const vendorCSSImportURlsObj = {
     bootstrap: "css/vendor/bootstrap/bootstrap.min.css"
 };
@@ -28,7 +29,11 @@ const vendorJSImportURLsObj = {
 /* Utility Functions */
 /*********************/
 
-// Add JSDoc Here
+/**
+* Creates a `<link>` HTML element for including a stylesheet.
+* @param {string} hrefValue - The URL of the stylesheet to be linked.
+* @returns {HTMLElement} The generated `<link>` element with `rel="stylesheet"` and the specified `href`.
+*/
 function createLinkTag(hrefValue) {
     return createHTMLElement({
         type: "link",
@@ -45,7 +50,12 @@ function createLinkTag(hrefValue) {
     });
 }
 
-// Add JSDoc Here
+/**
+* Creates a `<script>` HTML element for including a JavaScript file.
+* @param {string} srcValue - The URL of the JavaScript file to be loaded.
+* @param {boolean} [isDeferred=false] - Whether to add the `defer` attribute so the script executes after parsing.
+* @returns {HTMLElement} The generated `<script>` element with the specified `src` and optional `defer` attribute.
+*/
 function createScriptTag(srcValue, isDeferred = false) {
     const scriptTag = createHTMLElement({
         type: "script",
@@ -68,25 +78,36 @@ function createScriptTag(srcValue, isDeferred = false) {
 /* Event listeners, Method Calls, and Other Misc. Actions */
 /**********************************************************/
 
-// Add all vendor CSS stylesheets
+// Load all vendor CSS stylesheets
 for (const cssImport of Object.keys(vendorCSSImportURlsObj)) {
     document.head.appendChild(createLinkTag(vendorCSSImportURlsObj[cssImport]));
 }
 
-// Add all shared site styles and utilies 
+// Load all shared site CSS stylesheets
 for (const cssImport of Object.keys(sharedSiteCSSImportUrlsObj)) {
     document.head.appendChild(createLinkTag(sharedSiteCSSImportUrlsObj[cssImport]));
 }
 
-// Dynamically locate and add the necessary site stylesheets for the current page, based on the page name
-document.head.appendChild(createLinkTag(`css/site/${pageTitle.toLocaleLowerCase()}/${pageTitle.toLocaleLowerCase()}.css`));
+// Load any page-specific CSS stylesheets defined in the 'data-custom-stylesheets' meta attribute
+if (customStylesheetsMetaTag?.getAttribute("data-custom-stylesheets")) {
+    const stylesheetNames = customStylesheetsMetaTag.getAttribute("data-custom-stylesheets").split(",");
+    
+    for (const stylesheet of stylesheetNames) {
+        document.head.appendChild(createLinkTag(stylesheet));
+    }
+}
 
-// Add all vendor JS scripts
+// Load all vendor JS scripts
 for (const jsImport of Object.keys(vendorJSImportURLsObj)) {
     document.head.appendChild(createScriptTag(vendorJSImportURLsObj[jsImport]));
 }
 
-// Dynamically locate and add the necessary JS scripts for the current page, based on the page name
-document.head.appendChild(createScriptTag(`js/site/${pageTitle.toLocaleLowerCase()}/${pageTitle.toLocaleLowerCase()}Scripts.js`, true));
-
+// Load any page-specific JS scripts (deferred) defined in the 'data-custom-scripts' meta attribute
+if (customScriptsMetaTag?.getAttribute("data-custom-scripts")) {
+    const scriptNames = customScriptsMetaTag.getAttribute("data-custom-scripts").split(",");
+    
+    for (const scriptName of scriptNames) {
+        document.head.appendChild(createScriptTag(scriptName, true));
+    }
+}
 
