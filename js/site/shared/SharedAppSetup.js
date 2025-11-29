@@ -9,20 +9,20 @@ import { createHTMLElement } from "/js/site/shared/SharedAppUtilities.js"
 const customStylesheetsMetaTag = document.querySelector("[data-custom-stylesheets]");
 const customScriptsMetaTag = document.querySelector("[data-custom-scripts]");
 const vendorCSSImportURlsObj = {
-    bootstrap: "css/vendor/bootstrap/bootstrap.min.css"
+    bootstrap: "/css/vendor/bootstrap/bootstrap.min.css"
 };
 const sharedSiteCSSImportUrlsObj = {
-    baseStyles: "css/site/shared/baseStyles.css",
-    bootstrapOverrides: "css/site/shared/bootstrapOverrides.css",
-    utilities: "css/site/shared/utilities.css"
+    baseStyles: "/css/site/shared/baseStyles.css",
+    bootstrapOverrides: "/css/site/shared/bootstrapOverrides.css",
+    utilities: "/css/site/shared/utilities.css"
 };
 const vendorJSImportURLsObj = {
-    vueJS: "js/vendor/vue-js/vue.global.js",
-    primeVue: "js/vendor/primevue/primevue.min.js",
-    aura: "js/vendor/primevue/aura.js",
-    bootstrap: "js/vendor/bootstrap/bootstrap.bundle.min.js",
-    handleBars: "js/vendor/handlebars/handlebars.js",
-    fontAwesome: "js/vendor/fontawesome/fontawesome.js"
+    vueJS: "/js/vendor/vue-js/vue.global.js",
+    primeVue: "/js/vendor/primevue/primevue.min.js",
+    aura: "/js/vendor/primevue/aura.js",
+    bootstrap: "/js/vendor/bootstrap/bootstrap.bundle.min.js",
+    handleBars: "/js/vendor/handlebars/handlebars.js",
+    fontAwesome: "/js/vendor/fontawesome/fontawesome.js"
 };
 
 /*********************/
