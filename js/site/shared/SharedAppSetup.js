@@ -2,12 +2,15 @@
 /* Module Imports */
 /******************/
 import { createHTMLElement } from "/js/site/shared/SharedAppUtilities.js"
+import { createNavbar } from "/js/site/shared/SharedAppComponents.js";
 
 /*******************************************************/
 /* Const & let variable declarations & initializations */
 /*******************************************************/
 const customStylesheetsMetaTag = document.querySelector("[data-custom-stylesheets]");
 const customScriptsMetaTag = document.querySelector("[data-custom-scripts]");
+const customSharedComponentsMetaTag = document.querySelector("[data-custom-shared-components]");
+const pageName = document.querySelector("title").textContent;
 const vendorCSSImportURlsObj = {
     bootstrap: "/css/vendor/bootstrap/bootstrap.min.css"
 };
@@ -108,6 +111,25 @@ if (customScriptsMetaTag?.getAttribute("data-custom-scripts")) {
     
     for (const scriptName of scriptNames) {
         document.head.appendChild(createScriptTag(scriptName, true));
+    }
+}
+
+// Load and append any shared components defined in the optional "data-custom-shared-components" meta attribute
+if (customSharedComponentsMetaTag?.getAttribute("data-custom-shared-components")) {
+    const componentNames = customSharedComponentsMetaTag.getAttribute("data-custom-shared-components").split(",");
+
+    for (const componentName of componentNames) {
+        let component;
+        
+        switch (componentName.toLowerCase()) {
+            case "navbar":
+                component = createNavbar(pageName);
+                document.body.prepend(component);
+                break;
+
+            default:
+                throw new Error(`The component name "${componentName}" does not match any recognized components and is invalid.`);
+        }
     }
 }
 

@@ -8,59 +8,36 @@
     <!-- Custom metadata: defines page-specific CSS and JS resources to load via a comma‑separated list. Failures are unhandled to ensure fast failure -->
     <meta data-custom-stylesheets="/css/site/log/log.css">
 
+    <!-- Optional custom metadata: defines any page-specific components to include via a comma‑separated list. Failures are unhandled to ensure fast failure -->
+    <meta data-custom-shared-components="navbar">
+
     <title>Log</title>
 
     <!-- Import all static app utilities to use on the page -->
     <script type="module" src="/js/site/shared/SharedAppUtilities.js"></script>
 
+    <!-- Import all static app components to use on the page -->
+    <script type="module" src="/js/site/shared/SharedAppComponents.js"></script>
+
     <!-- Import the shared app setup script to dynamically add the necessary site CSS/JS and vendor CSS/JS to the document head. -->
     <script type="module" src="/js/site/shared/SharedAppSetup.js"></script>
   </head>
   <body>
-    <div id="log-page-container">
-        <!-- TODO - Use the DomParser API to create a method to add the navbar shared components to each page -->
-        <nav class="navbar navbar-expand-sm bg-dark d-none d-xxl-flex" data-bs-theme="dark">
-            <div class="container-fluid d-flex justify-content-between mx-lg-5">
-                <a class="navbar-brand" href="#">MyJot</a>
-                <div>
-                    <ul class="navbar-nav" >
-                        <!-- TODO - text-white, text-secondary and the active classes are hardcoded here, and need to be dynamically added to the nav items based on the current page-->
-                        <li class="nav-item px-5 text-white">         
-                            <a class="nav-link d-inline active" aria-current="page" href="#"><i class="fas fa-book fa-lg me-3"></i>Log</a>
-                        </li>
-                        <li class="nav-item px-5 text-secondary">               
-                            <a class="nav-link d-inline" href="#"><i class="fa-solid fa-chart-column fa-lg me-3"></i>Stats</a>
-                        </li>
-                        <li class="nav-item px-5 text-secondary">                  
-                            <a class="nav-link d-inline" href="#"><i class="fas fa-user-cog fa-lg me-3"></i>Settings</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <nav class="container-fluid bg-dark fixed-bottom d-flex d-xxl-none" data-bs-theme="dark">
-            <!-- TODO - text-white, text-secondary and the active classes are hardcoded here, and need to be dynamically added to the nav items based on the current page-->
-            <div class="container-fluid text-center d-flex justify-content-between py-2">
-                <div class="col text-white">
-                    <a class="nav-link active" aria-current="page" href="#">
-                        <i class="fas fa-book fa-lg mb-2"></i>
-                        <p>Log</p>
-                    </a>
-                </div>
-                <div class="col text-secondary">
-                    <a class="nav-link" href="#">
-                        <i class="fa-solid fa-chart-column fa-lg mb-2"></i>
-                        <p>Stats</p>
-                    </a>
-                </div>
-                <div class="col text-secondary">                  
-                    <a class="nav-link" href="#">
-                        <i class="fas fa-user-cog fa-lg mb-2"></i>
-                        <p>Settings</p>
-                    </a>
-                </div>
-            </div>
-        </nav>
+    <div class="container" id="log-page-container">
+        <header class="text-center text-xl-start mb-5">
+            <h1>Welcome back jane_doe!</h1>
+        </header>
+        <section class="d-flex flex-column align-items-center flex-xl-row align-items-xl-start">
+            <a type="button" class="log-button" id="log-meal-button">
+                <h3><i class="fas fa-plus-circle me-2"></i>Log Meal</h3>
+            </a>
+            <a type="button" class="log-button" id="log-workout-button">
+                <h3><i class="fas fa-plus-circle me-2"></i>Log Workout</h3>
+            </a>
+            <a type="button" class="log-button" id="save-data-button">
+                <h3><i class="fas fa-save me-2"></i>Save Data</h3>
+            </a>
+        </section>
     </div>
   </body>
 </html>

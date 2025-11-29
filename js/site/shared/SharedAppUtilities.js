@@ -62,4 +62,39 @@ function createHTMLElement({ type = "p", text = "", children = [], attributes = 
     return element;
 }
 
-export { deleteAllChildren, createHTMLElement }
+/**
+* Parses an HTML string and returns the first DOM element matching the given selector.
+* @param {string} htmlString The HTML string to parse (must not be empty).
+* @param {string} querySelector The CSS selector to find the element (must not be empty).
+* @returns {HTMLElement} The first matching DOM element.
+* @throws {TypeError} If either argument is not a string or is empty.
+* @throws {Error} If no element is found for the selector.
+*/
+function parseHTMLToElement(htmlString, querySelector) {
+    // Validate that the provided htmlString is a non-empty string
+    if (typeof htmlString !== "string" || !htmlString) {
+        throw new TypeError("htmlString must be a non-empty string.");
+    }
+
+    // Validate that the provided querySelector is a non-empty string
+    if (typeof querySelector !== "string" || !querySelector) {
+        throw new TypeError("querySelector must be a non-empty string.");
+    }
+
+    // Declare and initialize a new DOMParser object instance
+    const domParser = new DOMParser();
+
+    // Parse the HTML string into a document and extract the first matching element
+    const newDocument = domParser.parseFromString(htmlString, "text/html");
+    const element = newDocument.body.querySelector(querySelector);
+
+    // Throw an error to the caller if the provided selector does not match any element
+    if (!element) {
+        throw new Error(`No element found for selector: ${querySelector}.`);
+    }
+
+    // Return the matching element
+    return element;
+}
+
+export { deleteAllChildren, createHTMLElement, parseHTMLToElement }
