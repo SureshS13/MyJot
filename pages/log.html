@@ -7,17 +7,12 @@
 
     <!-- Custom metadata: defines page-specific CSS and JS resources to load via a comma‑separated list. Failures are unhandled to ensure fast failure -->
     <meta data-custom-stylesheets="/css/site/log/log.css">
+    <meta data-custom-scripts="/js/site/log/logScripts.js">
 
     <!-- Optional custom metadata: defines any page-specific components to include via a comma‑separated list. Failures are unhandled to ensure fast failure -->
     <meta data-custom-shared-components="navbar">
 
     <title>Log</title>
-
-    <!-- Import all static app utilities to use on the page -->
-    <script type="module" src="/js/site/shared/SharedAppUtilities.js"></script>
-
-    <!-- Import all static app components to use on the page -->
-    <script type="module" src="/js/site/shared/SharedAppComponents.js"></script>
 
     <!-- Import the shared app setup script to dynamically add the necessary site CSS/JS and vendor CSS/JS to the document head. -->
     <script type="module" src="/js/site/shared/SharedAppSetup.js"></script>
@@ -38,6 +33,7 @@
                 <h3><i class="fas fa-save me-2"></i>Save Data</h3>
             </a>
         </section>
+        <div class="d-none" id="app">{{ message }}</div>
     </div>
   </body>
 </html>

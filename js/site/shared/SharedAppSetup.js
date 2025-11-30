@@ -7,6 +7,11 @@ import { createNavbar } from "/js/site/shared/SharedAppComponents.js";
 /*******************************************************/
 /* Const & let variable declarations & initializations */
 /*******************************************************/
+
+// Cache-busting version number appended to asset URLs to force browsers to reload updated files
+// For more info, read the following: https://sqlpey.com/javascript/effective-cache-busting-strategies/#dynamic-cache-busting-via-javascript-execution
+const ASSET_VERSION = 1;
+
 const customStylesheetsMetaTag = document.querySelector("[data-custom-stylesheets]");
 const customScriptsMetaTag = document.querySelector("[data-custom-scripts]");
 const customSharedComponentsMetaTag = document.querySelector("[data-custom-shared-components]");
@@ -34,7 +39,7 @@ const vendorJSImportURLsObj = {
 
 /**
 * Creates a `<link>` HTML element for including a stylesheet.
-* @param {string} hrefValue - The URL of the stylesheet to be linked.
+* @param {string} hrefValue The URL of the stylesheet to be linked.
 * @returns {HTMLElement} The generated `<link>` element with `rel="stylesheet"` and the specified `href`.
 */
 function createLinkTag(hrefValue) {
@@ -47,7 +52,7 @@ function createLinkTag(hrefValue) {
             },
             {
                 name: "href",
-                value: hrefValue
+                value: `${hrefValue}?v=${ASSET_VERSION}`
             }
         ]
     });
@@ -55,23 +60,28 @@ function createLinkTag(hrefValue) {
 
 /**
 * Creates a `<script>` HTML element for including a JavaScript file.
-* @param {string} srcValue - The URL of the JavaScript file to be loaded.
-* @param {boolean} [isDeferred=false] - Whether to add the `defer` attribute so the script executes after parsing.
+* @param {string} srcValue The URL of the JavaScript file to be loaded.
+* @param {boolean} [isDeferred=false] Whether to add the `defer` attribute so the script executes after parsing.
+* @param {boolean} [isModule=false] Whether to set the `type="module"` attribute so the script is treated as an ES module.
 * @returns {HTMLElement} The generated `<script>` element with the specified `src` and optional `defer` attribute.
 */
-function createScriptTag(srcValue, isDeferred = false) {
+function createScriptTag(srcValue, isDeferred = false, isModule = false) {
     const scriptTag = createHTMLElement({
         type: "script",
         attributes: [
             {
                 name: "src",
-                value: srcValue
+                value: `${srcValue}?v=${ASSET_VERSION}`
             }
         ]
     });
 
     if (isDeferred) {
         scriptTag.setAttribute("defer", "");
+    }
+
+    if (isModule) {
+        scriptTag.setAttribute("type", "module");
     }
 
     return scriptTag;
@@ -110,7 +120,7 @@ if (customScriptsMetaTag?.getAttribute("data-custom-scripts")) {
     const scriptNames = customScriptsMetaTag.getAttribute("data-custom-scripts").split(",");
     
     for (const scriptName of scriptNames) {
-        document.head.appendChild(createScriptTag(scriptName, true));
+        document.head.appendChild(createScriptTag(scriptName, true, true));
     }
 }
 
@@ -132,4 +142,10 @@ if (customSharedComponentsMetaTag?.getAttribute("data-custom-shared-components")
         }
     }
 }
+
+// Dispatch a custom event after the page has fully loaded to signal app setup completion
+window.addEventListener("load", function () {
+    const event = new CustomEvent("appsetupcompleted");
+    window.dispatchEvent(event);
+});
 
