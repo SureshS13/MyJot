@@ -33,17 +33,20 @@ function createNavbar(activePage) {
         <div class="mb-5" id="navbar">
             <nav class="navbar navbar-expand-sm bg-dark d-none d-xl-flex" data-bs-theme="dark">
                 <div class="container-fluid d-flex justify-content-between mx-lg-5">
-                    <a class="navbar-brand fw-bold" href="#">MyJot</a>
+                    <a class="navbar-brand fw-bold" href="#">
+                        <i class="fa-solid fa-square-pen"></i>
+                        MyJot
+                    </a>
                     <div>
                         <ul class="navbar-nav" >
                             <li class="nav-item px-5">         
-                                <a class="nav-link d-inline ${activePage === 'log' ? 'active' : ''}" aria-current="page" href="#"><i class="fas fa-book fa-lg me-3"></i>Log</a>
+                                <a class="nav-link d-inline ${activePage === 'log' ? 'active' : ''}" aria-current="page" href="#"><i class="fas fa-book fa-lg me-2"></i>Log</a>
                             </li>
                             <li class="nav-item px-5">               
-                                <a class="nav-link d-inline ${activePage === 'stats' ? 'active' : ''}" href="#"><i class="fa-solid fa-chart-column fa-lg me-3"></i>Stats</a>
+                                <a class="nav-link d-inline ${activePage === 'stats' ? 'active' : ''}" href="#"><i class="fa-solid fa-chart-column fa-lg me-2"></i>Stats</a>
                             </li>
                             <li class="nav-item px-5">                  
-                                <a class="nav-link d-inline ${activePage === 'settings' ? 'active' : ''}" href="#"><i class="fas fa-user-cog fa-lg me-3"></i>Settings</a>
+                                <a class="nav-link d-inline ${activePage === 'settings' ? 'active' : ''}" href="#"><i class="fas fa-user-cog fa-lg me-2"></i>Settings</a>
                             </li>
                         </ul>
                     </div>
