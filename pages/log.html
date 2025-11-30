@@ -22,7 +22,7 @@
         <header class="text-center text-xl-start mb-5">
             <h1>Welcome back jane_doe!</h1>
         </header>
-        <section class="d-flex flex-column align-items-center flex-xl-row align-items-xl-start">
+        <section class="d-flex flex-column align-items-center flex-xl-row align-items-xl-start" id="log-buttons">
             <a type="button" class="log-button" id="log-meal-button">
                 <h3><i class="fas fa-plus-circle me-2"></i>Log Meal</h3>
             </a>
@@ -33,7 +33,31 @@
                 <h3><i class="fas fa-save me-2"></i>Save Data</h3>
             </a>
         </section>
-        <div class="d-none" id="app">{{ message }}</div>
+        <section class="d-flex flex-column align-items-center">
+          <h3 class="mb-4 align-self-xl-start">History</h3>
+          <span class="loader"></span>
+          <div class="card p-4 d-none" id="app">
+            <p-datatable :value="products" show-gridlines striped-rows>
+              <p-column field="category" header="Category"></p-column>
+              <p-column field="name" header="Name"></p-column>
+              <p-column field="datetime" header="Date & Time"></p-column>
+              <p-column field="editlog" header="" :class="`text-center`">
+                <template #body="slotProps">
+                  <a class="text-decoration-none text-black" :href="`${slotProps.data.editlog}`">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </a>
+                </template>
+              </p-column>
+              <p-column field="deletelog" header="" :class="`text-center`">
+                <template #body="slotProps">
+                  <a class="text-decoration-none text-black" :href="`${slotProps.data.deletelog}`">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </a>
+                </template>
+              </p-column>
+            </p-datatable>
+          </div>
+        </section>
     </div>
   </body>
 </html>

@@ -1,16 +1,8 @@
-/******************/
-/* Module Imports */
-/******************/
-import { parseHTMLToElement } from "/js/site/shared/SharedAppUtilities.js"
-
 /*******************************************************/
 /* Const & let variable declarations & initializations */
 /*******************************************************/
-const vueApp = document.querySelector("#app");
-
-/*********************/
-/* Utility Functions */
-/*********************/
+const loadingSpinner = document.querySelector(".loader");
+const vueAppContainer = document.querySelector("#app");
 
 /**********************************************************/
 /* Event listeners, Method Calls, and Other Misc. Actions */
@@ -18,17 +10,57 @@ const vueApp = document.querySelector("#app");
 
 // Listen for the custom "appsetupcompleted" event to initialize the Log page's Vue app
 window.addEventListener("appsetupcompleted", function () {
-    const { createApp, ref } = Vue
+    // Import Vue's core API methods from the global Vue object
+    const { createApp } = Vue
 
-    createApp({
-        setup() {
-            const message = ref('Testing');
+    // Create a new Vue application instance with initial data and lifecycle hooks
+    const app = createApp({
+        data() {
             return {
-                message
-            };
+                // Temporary hardcoded list of products for testing; replace with real data once integrations are complete
+                products: [
+                    { 
+                        "category": "Exercise",
+                        "name": "Legs day",
+                        "datetime": "2024-03-10 02:30",
+                        "editlog": "https://vuejs.org/",
+                        "deletelog": "https://vuejs.org/"
+                    },
+                    { 
+                        "category": "Meal",
+                        "name": "Taco Bell",
+                        "datetime": "2024-03-9 02:30",
+                        "editlog": "https://vuejs.org/",
+                        "deletelog": "https://vuejs.org/"
+                    }
+                ]
+            }
+        },
+        methods() {
+            // Define component methods here (e.g., edit, delete, format helpers)
+        },
+        mounted() {
+            console.log(this.products);
         }
-    }).mount('#app');
+    })
+    
+    // Configure PrimeVue with the Aura theme preset from PrimeUIX
+    app.use(PrimeVue.Config, {
+        theme: {
+            preset: PrimeUIX.Themes.Aura
+        }
+    });
 
-    // Make the app visible after the setup pipeline completes
-    vueApp.classList.remove("d-none");
+    // Register PrimeVue DataTable and Column components globally for use in templates
+    app.component('p-datatable', PrimeVue.DataTable)
+        .component('p-column', PrimeVue.Column);
+    
+    // Mount the Vue app to the #app container in the DOM
+    app.mount('#app');
+
+    // Remove the loading spinner once the Vue app has finished initializing
+    loadingSpinner.remove();
+
+    // Reveal the Vue app container after setup is complete
+    vueAppContainer.classList.remove("d-none");
 });

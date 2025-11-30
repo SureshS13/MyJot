@@ -120,7 +120,7 @@ if (customScriptsMetaTag?.getAttribute("data-custom-scripts")) {
     const scriptNames = customScriptsMetaTag.getAttribute("data-custom-scripts").split(",");
     
     for (const scriptName of scriptNames) {
-        document.head.appendChild(createScriptTag(scriptName, true, true));
+        document.head.appendChild(createScriptTag(scriptName, true));
     }
 }
 
