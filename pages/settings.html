@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Custom metadata: defines page-specific CSS and JS resources to load via a comma‑separated list. Failures are unhandled to ensure fast failure -->
+    <meta data-custom-stylesheets="/css/site/settings/settings.css">
+    <meta data-custom-scripts="/js/site/settings/settingScripts.js">
+
+    <!-- Optional custom metadata: defines any page-specific components to include via a comma‑separated list. Failures are unhandled to ensure fast failure -->
+    <meta data-custom-shared-components="navbar">
+
+    <title>Settings</title>
+
+    <!-- Import the shared app setup script to dynamically add the necessary site CSS/JS and vendor CSS/JS to the document head. -->
+    <script type="module" src="/js/site/shared/SharedAppSetup.js"></script>
+  </head>
+  <body>
+    <div class="container" id="settings-page-container">
+        <header class="text-center text-xl-start mb-5">
+            <h1>Settings</h1>
+        </header>
+        <section class="row">
+            <div class="col-12 col-xl-3 d-flex flex-column align-items-center d-xl-block mb-4 mb-xl-0">
+                <div class="btn-group-vertical" id="setting-button-group" role="group" aria-label="Vertical settings buttons group">
+                    <button type="button" class="btn btn-outline-dark active" id="general-settings-button">General Settings</button>
+                    <button type="button" class="btn btn-outline-dark" id="custom-meals-button">Custom Meals</button>
+                    <button type="button" class="btn btn-outline-dark" id="exercise-routines-button">Exercise Routines</button>
+                </div>
+            </div>
+            <div class="col-12 col-xl-9">
+                <div class="d-flex flex-column align-items-center d-xl-block text-center text-xl-start" id="setting-content">
+                    <section id="general-settings">
+                        <label for="username-input" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username-input" placeholder="Enter a username">
+                    </section>
+                    <section class="d-none" id="custom-meals">
+                        <div class="input-group mb-4" id="custom-meals-searchbar">
+                            <span class="input-group-text" id="search-icon">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            <input type="search" class="form-control" placeholder="Search Custom Meals" aria-label="Search Custom Meals" aria-describedby="search-icon">
+                        </div>
+                        <table class="table table-striped table-hover table-bordered table-responsive mt-4 mt-xl-0">
+                            <thead>
+                              <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th></th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Salad</td>
+                                <td>Lunch</td>
+                                <td class="text-center align-middle">
+                                    <a class="text-decoration-none text-black" href="#">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                      </a>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <a class="text-decoration-none text-black" href="#">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Pizza</td>
+                                <td>Dinner</td>
+                                <td class="text-center align-middle">
+                                    <a class="text-decoration-none text-black" href="#">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                      </a>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <a class="text-decoration-none text-black" href="#">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Ladoo</td>
+                                <td>Misc</td>
+                                <td class="text-center align-middle">
+                                    <a class="text-decoration-none text-black" href="#">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                      </a>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <a class="text-decoration-none text-black" href="#">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
+                                </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                        <a href="">
+                            <button type="button" class="btn btn-outline-dark" id="add-new-custom-meal-button">Add New Custom Meal</button>
+                        </a>
+                    </section>
+                    <section class="d-none" id="exercise-routines">
+                        <div class="input-group mb-4" id="exercise-routines-searchbar">
+                            <span class="input-group-text" id="search-icon">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            <input type="search" class="form-control" placeholder="Search Exercise Routines" aria-label="Search Exercise Routines" aria-describedby="search-icon">
+                        </div>
+                        <table class="table table-striped table-hover table-bordered table-responsive mt-4 mt-xl-0">
+                            <thead>
+                              <tr>
+                                <th>Name</th>
+                                <th></th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>My Wed Strength Day</td>
+                                <td class="text-center align-middle">
+                                    <a class="text-decoration-none text-black" href="#">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                      </a>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <a class="text-decoration-none text-black" href="#">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
+                                </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                        <a href="">
+                            <button type="button" class="btn btn-outline-dark" id="add-new-exercise-routine-button">Add New Exercise Routine</button>
+                        </a>
+                    </section>
+                    <button type="button" class="btn btn-dark" id="confirm-changes-button">Confirm changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
