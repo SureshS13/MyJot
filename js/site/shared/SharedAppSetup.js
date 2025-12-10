@@ -15,7 +15,7 @@ const ASSET_VERSION = 1;
 const customStylesheetsMetaTag = document.querySelector("[data-custom-stylesheets]");
 const customScriptsMetaTag = document.querySelector("[data-custom-scripts]");
 const customSharedComponentsMetaTag = document.querySelector("[data-custom-shared-components]");
-const pageName = document.querySelector("title").textContent;
+const pageName = document.querySelector("[data-nav-label-override]")?.getAttribute("data-nav-label-override") ?? document.querySelector("title").textContent;
 const vendorCSSImportURlsObj = {
     bootstrap: "/css/vendor/bootstrap/bootstrap.min.css"
 };

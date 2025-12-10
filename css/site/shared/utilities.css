@@ -25,6 +25,14 @@
       box-shadow: 32px 0 #000, -32px 0 #0002;
     }
 }
+
+/********************************************/
+/* Tooltip Component Styles (Used Globally) */
+/********************************************/
+.myjot-tooltip {
+  color: black;
+  text-decoration: none;
+}
   
 
 

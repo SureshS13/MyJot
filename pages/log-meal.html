@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Custom metadata: defines page-specific CSS and JS resources to load via a comma‑separated list. Failures are unhandled to ensure fast failure -->
+    <meta data-custom-stylesheets="/css/site/log-meal/log-meal.css">
+    <meta data-custom-scripts="/js/site/log-meal/logMealScripts.js">
+
+    <!-- Optional custom metadata: defines any page-specific components to include via a comma‑separated list. Failures are unhandled to ensure fast failure -->
+    <meta data-custom-shared-components="navbar">
+
+    <!-- 
+        Optional custom metadata: Provides an override for the page name used in the navbar. 
+        If present, this value is passed to the JS script as the active page label 
+        instead of reading from <title>. 
+        Failures are unhandled to ensure fast failure 
+    -->
+    <meta data-nav-label-override="Log">
+
+    <title>Log Meal</title>
+
+    <!-- Import the shared app setup script to dynamically add the necessary site CSS/JS and vendor CSS/JS to the document head. -->
+    <script type="module" src="/js/site/shared/SharedAppSetup.js"></script>
+  </head>
+  <body>
+    <div class="container" id="log-meal-page-container">
+        <header class="mb-5 text-center text-sm-start">
+            <a class="text-black text-decoration-none" href="/pages/log.html">
+                <i class="fa-solid fa-caret-left"></i>
+                Return to Homepage
+            </a>
+        </header>
+        <section class="d-flex flex-column align-items-center">
+            <h3 class="align-self-xl-start mb-4">Log Meal</h3>
+            <span class="loader d-block mx-auto my-0"></span>
+            <div class="d-none" id="app">
+                <section class="mb-5">
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <label for="log-name">
+                            Log Name
+                            <a class="myjot-tooltip" data-bs-toggle="tooltip" data-bs-title="Default tooltip">
+                                <i class="fa fa-question-circle fa-lg" aria-hidden="true"></i>
+                            </a>
+                        </label>
+                        <input type="text" class="form-control" id="log-name" name="date-time">
+                    </div>
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <label for="date-time">Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="date-time" name="date-time"/>
+                    </div>
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <label for="notes">Notes (Optional)</label>
+                        <textarea type="textarea" class="form-control" id="notes"></textarea>
+                    </div>
+                </section>
+                <br />
+                <section class="mb-5">
+                    <h3 class="text-center text-xl-start mb-4">Meal Details</h3>
+                </section>
+            </div>
+        </section>
+    </div>
+  </body>
+</html>
