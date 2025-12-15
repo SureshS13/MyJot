@@ -20,7 +20,7 @@
     }
 
     #setting-button-group {
-        width: 80%;
+        width: 85%;
     }
 
     #setting-content {
@@ -28,6 +28,6 @@
     }    
 
     #setting-content > section, #confirm-changes-button {
-        width: 80%;
+        width: 85%;
     }
 }

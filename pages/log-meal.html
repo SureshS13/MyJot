@@ -27,7 +27,7 @@
   </head>
   <body>
     <div class="container" id="log-meal-page-container">
-        <header class="mb-5 text-center text-sm-start">
+        <header class="mb-5 text-center text-xl-start">
             <a class="text-black text-decoration-none" href="/pages/log.html">
                 <i class="fa-solid fa-caret-left"></i>
                 Return to Homepage
@@ -36,7 +36,7 @@
         <section class="d-flex flex-column align-items-center">
             <h3 class="align-self-xl-start mb-4">Log Meal</h3>
             <span class="loader d-block mx-auto my-0"></span>
-            <div class="d-none" id="app">
+            <div class="d-none mb-xl-5" id="app">
                 <section class="mb-5">
                     <div class="d-flex flex-column gap-2 mb-4">
                         <label for="log-name">
@@ -45,21 +45,48 @@
                                 <i class="fa fa-question-circle fa-lg" aria-hidden="true"></i>
                             </a>
                         </label>
-                        <input type="text" class="form-control" id="log-name" name="date-time">
+                        <input v-model="inputtedLogName" type="text" class="form-control" id="log-name" name="log-name">
                     </div>
                     <div class="d-flex flex-column gap-2 mb-4">
                         <label for="date-time">Date & Time</label>
-                        <input type="datetime-local" class="form-control" id="date-time" name="date-time"/>
+                        <input v-model="selectedDateTime" type="datetime-local" class="form-control" id="date-time" name="date-time"/>
                     </div>
                     <div class="d-flex flex-column gap-2 mb-4">
                         <label for="notes">Notes (Optional)</label>
-                        <textarea type="textarea" class="form-control" id="notes"></textarea>
+                        <textarea v-model="inputtedNotes" type="textarea" class="form-control" id="notes"></textarea>
                     </div>
                 </section>
                 <br />
                 <section class="mb-5">
                     <h3 class="text-center text-xl-start mb-4">Meal Details</h3>
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <label for="meal-name">Name</label>
+                        <input v-model="inputtedMealName" type="text" class="form-control" id="meal-name" name="meal-name">
+                    </div>
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <label for="meal-type">Type</label>
+                        <p-select v-model="selectedMealType" :options="mealTypes" id="meal-type" name="meal-type" checkmark :highlightOnSelect="false" />
+                    </div>
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <label for="calories">Calories (Optional)</label>
+                        <p-input-number v-model="inputtedCalories" inputId="calories" :min="0" suffix=" cal" fluid />        
+                    </div>
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <label for="protein">Protein (Optional)</label>
+                        <p-input-number v-model="inputtedProtein" inputId="protein" :min="0" suffix=" grams" fluid />        
+                    </div>
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <label for="carbs">Carbs (Optional)</label>
+                        <p-input-number v-model="inputtedCarbs" inputId="carbs" :min="0" suffix=" grams" fluid />        
+                    </div>
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <label for="Fats">Fats (Optional)</label>
+                        <p-input-number v-model="inputtedFats" inputId="fats" :min="0" suffix=" grams" fluid />        
+                    </div>
                 </section>
+                <div class="d-flex flex-column d-xl-block text-xl-center mb-xl-4">
+                    <input type="button" class="btn btn-dark" id="add-meal-entry" value="Add Meal Entry"/>      
+                </div>
             </div>
         </section>
     </div>

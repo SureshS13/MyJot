@@ -6,10 +6,8 @@
     body {
         padding-bottom: 6rem; /* Accounts for 4rem mobile navbar height plus 2rem extra spacing on the log meal page */
     }
-}
 
-@media screen and (max-width: 576px) {
     #app {
-        width: 75%;
+        width: 85%;
     }
 }

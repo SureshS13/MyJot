@@ -17,7 +17,16 @@ window.addEventListener("appsetupcompleted", function () {
     const app = createApp({
         data() {
             return {
-                
+                inputtedLogName: null,
+                selectedDateTime: null,
+                inputtedNotes: null,
+                inputtedMealName: null,
+                selectedMealType: null,
+                mealTypes: ["Breakfast", "Lunch", "Dinner", "Snack", "Misc"],
+                inputtedCalories: null,
+                inputtedProtein: null,
+                inputtedCarbs: null,
+                inputtedFats: null
             }
         },
         methods() {
@@ -26,6 +35,9 @@ window.addEventListener("appsetupcompleted", function () {
         mounted() {
             // Add comment here
             [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        },
+        updated() {
+            console.log(this.inputtedLogName, this.selectedDateTime, this.inputtedNotes, this.inputtedMealName, this.selectedMealType, this.inputtedCalories, this.inputtedProtein, this.inputtedCarbs, this.inputtedFats);
         }
     })
     
@@ -36,8 +48,9 @@ window.addEventListener("appsetupcompleted", function () {
         }
     });
     
-    // Register PrimeVue DataTable and Column components globally for use in templates
-    // app.component('p-input-text', PrimeVue.InputText);
+    // Register PrimeVue Select and InputNumber components globally for use in templates
+    app.component('p-select', PrimeVue.Select)
+        .component('p-input-number', PrimeVue.InputNumber);
     
     // Mount the Vue app to the #app container in the DOM
     app.mount('#app');
