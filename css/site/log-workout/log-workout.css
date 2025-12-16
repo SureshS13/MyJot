@@ -1,0 +1,13 @@
+#app {
+    width: 100%;
+}
+
+@media screen and (max-width: 1200px) {
+    body {
+        padding-bottom: 6rem; /* Accounts for 4rem mobile navbar height plus 2rem extra spacing on the log meal page */
+    }
+
+    #app {
+        width: 85%;
+    }
+}
