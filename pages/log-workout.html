@@ -9,6 +9,9 @@
     <meta data-custom-stylesheets="/css/site/log-workout/log-workout.css">
     <meta data-custom-scripts="/js/site/log-workout/logWorkoutScripts.js">
 
+    <!-- Optional custom metadata: defines any page-specific JS module scripts to include via a comma‑separated list. Failures are unhandled to ensure fast failure -->
+    <meta data-custom-script-modules="/js/site/log-workout/drag-drop-touch.esm.min.js">
+
     <!-- Optional custom metadata: defines any page-specific components to include via a comma‑separated list. Failures are unhandled to ensure fast failure -->
     <meta data-custom-shared-components="navbar">
 
@@ -72,7 +75,96 @@
                             <i class="fa-solid fa-circle-plus fa-2x"></i>
                         </button>
                     </div>
-                    <p class="text-center">No exercises have been added</p>
+                    <p class="text-center d-none">No exercises have been added</p>
+
+                    <!-- Added Exercise Card Components -->
+                    <div id="added-exercises">
+                        <div class="accordion" id="exerciseAccordion" draggable="true">
+                            <div class="accordion-item">
+                              <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    <span>1</span>&nbsp; - &nbsp;<span>Full Body Stretch</span>
+                                </button>
+                              </h2>
+                              <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#exerciseAccordion">
+                                <div class="accordion-body mb-2">
+                                    <div class="card-body">
+                                        <h5 class="mb-2">
+                                            <span>1</span> - <span contenteditable="true">Full Body Stretch</span>
+                                        </h5>
+                                        <p class="optional-exercise-notes mb-4" contenteditable="true"></p>
+                                        <div class="d-flex flex-column gap-2 mb-4">
+                                            <label for="exercise-type">Category</label>
+                                            <p-select v-model="selectedExerciseType" :options="exerciseTypes" class="w-100" id="exercise-type" name="exercise-type" checkmark :highlightOnSelect="false" />
+                                        </div>
+                                        <div class="mb-4">
+                                            <p class="mb-2">Sets</p>
+                                            <div class="card mb-3">
+                                                <div class="card-body p-0">
+                                                    <div class="p-4">
+                                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                                            <h5 class="mb-0" style="padding-top: 0.15rem;">1</h5>
+                                                            <i class="fa-solid fa-circle-minus fa-lg"></i> 
+                                                        </div>
+                                                        <div class="d-flex flex-column gap-2 mb-4">
+                                                            <label for="set-type">Type</label>
+                                                            <p-select v-model="selectedSetType" :options="setTypes" class="w-100" id="set-type" name="set-type" checkmark :highlightOnSelect="false" />
+                                                        </div>
+                                                        <div class="d-flex flex-column flex-xl-row gap-xl-3 mb-4" :class="(selectedExerciseType !== 'Strength Training') ? 'd-none' : ''">
+                                                            <div class="flex-xl-grow-1 mb-4 mb-xl-0">
+                                                                <label class="mb-2" for="reps">Reps</label>
+                                                                <p-input-number v-model="inputtedReps" inputId="reps" :min="0" fluid />        
+                                                            </div>
+                                                            <div class="flex-xl-grow-1 mb-4 mb-xl-0">
+                                                                <label class="mb-2" for="weight">Weight</label>
+                                                                <p-input-number v-model="inputtedWeight" inputId="weight" :min="0" fluid />        
+                                                            </div>
+                                                            <div class="flex-xl-grow-1 mb-0 mb-xl-0">
+                                                                <label class="mb-2" for="set-weight-unit-type">Unit Type</label>
+                                                                <p-select v-model="selectedSetWeightUnitType" :options="weightUnitTypes" class="w-100" id="set-weight-unit-type" name="set-weight-unit-type" checkmark :highlightOnSelect="false" /> 
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-flex flex-column flex-xl-row gap-xl-3 mb-4" :class="(selectedExerciseType !== 'Cardio') ? 'd-none' : ''">
+                                                            <div class="flex-xl-grow-1 mb-4 mb-xl-0">
+                                                                <label class="mb-2" for="minutes">Minutes</label>
+                                                                <p-input-number v-model="inputtedMinutes" inputId="minutes" :min="0" fluid />        
+                                                            </div>
+                                                            <div class="flex-xl-grow-1 mb-4 mb-xl-0">
+                                                                <label class="mb-2" for="seconds">Seconds</label>
+                                                                <p-input-number v-model="inputtedSeconds" inputId="seconds" :min="0" fluid />        
+                                                            </div>
+                                                            <div class="flex-xl-grow-1 mb-4 mb-xl-0">
+                                                                <label class="mb-2" for="distance">Distance</label>
+                                                                <p-input-number v-model="inputtedDistance" inputId="distance" :min="0" fluid />        
+                                                            </div>
+                                                            <div class="flex-xl-grow-1 mb-0 mb-xl-0">
+                                                                <label class="mb-2" for="set-weight-unit-type">Unit Type</label>
+                                                                <p-select v-model="selectedSetWeightUnitType" :options="weightUnitTypes" class="w-100" id="set-weight-unit-type" name="set-weight-unit-type" checkmark :highlightOnSelect="false" /> 
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-flex flex-column gap-2 mb-4" :class="(selectedExerciseType !== 'Cardio') ? 'd-none' : ''">
+                                                            <label for="calories">Calories (Optional)</label>
+                                                            <p-input-number v-model="inputtedCalories" inputId="calories" :min="0" fluid /> 
+                                                        </div>
+                                                        <p class="optional-set-notes" contenteditable="true"></p>
+                                                    </div>
+                                                    <button type="button" class="btn btn-outline-dark border-0 border-top rounded-top-0 w-100 p-2" style="border-color: rgba(0, 0, 0, 0.176);">
+                                                        <i class="fa-solid fa-circle-plus"></i> Add Set
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <section class="d-flex flex-column d-xl-block text-xl-center">
+                                            <button type="button" class="btn btn-outline-danger">
+                                                <i class="fa-solid fa-trash"></i> Delete Exercise
+                                            </button>   
+                                        </section>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Add Exercise Modal Markup -->
                     <p-dialog v-model:visible="showAddExerciseModal" modal header="Add Exercise" :style="{ width: '50vw' }" :breakpoints="{ '575px': '90vw' }">
@@ -92,7 +184,7 @@
                             </div>
                         </div>
                         <div class="d-flex flex-column gap-2 mb-4" :class='selectedExerciseSetup === "new" ? "d-flex" : "d-none"'>
-                            <label for="new-exercise-type">Type</label>
+                            <label for="new-exercise-type">Category</label>
                             <p-select v-model="selectedNewExerciseType" :options="exerciseTypes" id="new-exercise-type" name="new-exercise-type" checkmark :highlightOnSelect="false" />
                         </div>
                         <div class="d-flex flex-column gap-2 mb-4" :class='selectedExerciseSetup === "existing" ? "d-flex" : "d-none"'>

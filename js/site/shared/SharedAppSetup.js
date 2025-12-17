@@ -14,6 +14,7 @@ const ASSET_VERSION = 1;
 
 const customStylesheetsMetaTag = document.querySelector("[data-custom-stylesheets]");
 const customScriptsMetaTag = document.querySelector("[data-custom-scripts]");
+const customScriptModulesMetaTag = document.querySelector("[data-custom-script-modules]");
 const customSharedComponentsMetaTag = document.querySelector("[data-custom-shared-components]");
 const pageName = document.querySelector("[data-nav-label-override]")?.getAttribute("data-nav-label-override") ?? document.querySelector("title").textContent;
 const vendorCSSImportURlsObj = {
@@ -29,7 +30,6 @@ const vendorJSImportURLsObj = {
     primeVue: "/js/vendor/primevue/primevue.min.js",
     aura: "/js/vendor/primevue/aura.js",
     bootstrap: "/js/vendor/bootstrap/bootstrap.bundle.min.js",
-    handleBars: "/js/vendor/handlebars/handlebars.js",
     fontAwesome: "/js/vendor/fontawesome/fontawesome.js"
 };
 
@@ -122,6 +122,15 @@ if (customScriptsMetaTag?.getAttribute("data-custom-scripts")) {
     for (const scriptName of scriptNames) {
         document.head.appendChild(createScriptTag(scriptName, true));
     }
+}
+
+// Load any page-specific JS script modules (deferred) defined in the optional 'data-custom-script-modules' meta attribute
+if (customScriptModulesMetaTag?.getAttribute("data-custom-script-modules")) {
+    const scriptModuleNames = customScriptModulesMetaTag.getAttribute("data-custom-script-modules").split(",");
+    
+    for (const scriptModuleName of scriptModuleNames) {
+        document.head.appendChild(createScriptTag(scriptModuleName, true, true));
+    } 
 }
 
 // Load and append any shared components defined in the optional "data-custom-shared-components" meta attribute

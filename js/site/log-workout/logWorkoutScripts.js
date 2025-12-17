@@ -28,7 +28,10 @@ window.addEventListener("appsetupcompleted", function () {
                 selectedNewExerciseType: "Strength Training",
                 exerciseTypes: ["Cardio", "Strength Training", "Flexibility"],
                 selectedExerciseRoutine: null,
-                existingExerciseRoutineNames: ["My Wed Strength Day", "Sat Cardio"]
+                existingExerciseRoutineNames: ["My Wed Strength Day", "Sat Cardio"],
+                selectedExerciseType: null,
+                selectedSetType: "Normal",
+                setTypes: ["Normal", "Warm-up"]
             }
         },
         
@@ -37,10 +40,13 @@ window.addEventListener("appsetupcompleted", function () {
         },
         mounted() {
             // Add comment here
+            window.DragDropTouch.enable();
+
+            // Add comment here
             [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
         },
         updated() {
-            console.log(this.inputtedLogName, this.selectedDateTime, this.inputtedBodyWeight, this.selectedUnitType, this.inputtedNotes, this.selectedExerciseSetup, this.selectedNewExerciseType);
+            console.log(this.inputtedLogName, this.selectedDateTime, this.inputtedBodyWeight, this.selectedUnitType, this.inputtedNotes, this.selectedExerciseSetup, this.selectedNewExerciseType, this.selectedExerciseType, this.selectedSetType);
         }
     })
     
