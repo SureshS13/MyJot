@@ -2,16 +2,6 @@
     width: 100%;
 }
 
-.optional-exercise-notes:empty::before {
-    color: grey;
-    content: "Add Exercise Notes (Optional)";
-}
-
-.optional-set-notes:empty::before {
-    color: grey;
-    content: "Add Set Notes (Optional)";
-}
-
 @media screen and (max-width: 1200px) {
     body {
         padding-bottom: 6rem; /* Accounts for 4rem mobile navbar height plus 2rem extra spacing on the log meal page */
