@@ -2,6 +2,10 @@
     width: 100%;
 }
 
+#app .exercise-name:empty::before {
+    content: "Add Exercise Name";
+}
+
 @media screen and (max-width: 1200px) {
     body {
         padding-bottom: 6rem; /* Accounts for 4rem mobile navbar height plus 2rem extra spacing on the log meal page */

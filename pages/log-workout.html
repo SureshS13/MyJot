@@ -79,8 +79,7 @@
 
                     <!-- Added Exercise Card Components -->
                     <div id="added-exercises">
-                        {{workoutStore.addedExercises}}
-                        <exercise-component v-for="exercise in workoutStore.addedExercises" :key="exercise.id" :id="exercise.id" :name="exercise.name" :notes="exercise.notes" :category="exercise.category" :sets="exercise.sets"></exercise-component>
+                        <exercise-component v-for="exercise in workoutStore.addedExercises" :key="exercise.id" :id="exercise.id" :order="exercise.order" :name="exercise.name" :notes="exercise.notes" :category="exercise.category" :sets="exercise.sets"></exercise-component>
                     </div>
                     
                     <!-- Add Exercise Modal Markup -->
@@ -110,12 +109,12 @@
                         </div>
                         <br>
                         <div class="text-center mb-3">
-                            <input v-on:click="showAddExerciseModal = false" type="button" class="btn btn-dark" id="add-meal-entry" :value='selectedExerciseSetup === "new" ? "Add Exercise" : "Add Exercises"'/>      
+                            <input @click="addExercise()" type="button" class="btn btn-dark" id="add-meal-entry" :value='selectedExerciseSetup === "new" ? "Add Exercise" : "Add Exercises"'/>      
                         </div>
                     </p-dialog>
                 </section>
                 <section class="d-flex flex-column d-xl-block text-xl-center mb-xl-4">
-                    <input type="button" class="btn btn-dark" id="add-meal-entry" value="Add Workout Entry"/>      
+                    <input @click="addWorkoutEntry()" type="button" class="btn btn-dark" id="add-workout-entry" value="Add Workout Entry"/>      
                 </section>
             </div>
         </section>

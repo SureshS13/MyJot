@@ -15,64 +15,41 @@ window.addEventListener("appsetupcompleted", function () {
 
     // Add comment here
     const workoutStore = reactive({
-        addedExercises: [
-            // test exercises
-            {
-                id: 1,
-                name: "Curls",
-                notes: null,
-                category: "Strength Training",
+        addedExercises: [],
+        addExercise: function({ setup = "new", category = "Strength Training", routine }) {
+            console.log(setup)
+            this.addedExercises.push({
+                id: this.addedExercises.length + 1,
+                order: this.addedExercises.length + 1,
+                category: category,
                 sets: [
                     {
                         id: 1,
-                        type: "Normal",
-                        reps: 3,
-                        weight: 20,
-                        weightUnitType: "kgs",
-                        setNotes: null
+                        order: 1,
+                        type: "Normal"
                     }
                 ]
-            },
-            {
-                id: 2,
-                name: "Treadmill",
-                notes: null,
-                category: "Cardio",
-                sets: [
-                    {
-                        id: 1,
-                        type: "Normal",
-                        minutes: 2,
-                        seconds: 3,
-                        distance: 2.6,
-                        distanceUnitType: "miles",
-                        calories: 300,
-                        setNotes: null
-                    }
-                ]
-            },
-            {
-                id: 3,
-                name: "Stretch",
-                notes: "Test notes",
-                category: "Flexibility",
-                sets: [
-                    {
-                        id: 1,
-                        type: "Warm-up",
-                        setNotes: "These are test notes"
-                    }
-                ]
-            },
-        ],
-        addExercise: function() {
-            this.addedExercises.push(1);
+            });
         },
         updateExercise: function(id, name, category, notes) {
             this.addedExercises[id - 1].name = name;
             this.addedExercises[id - 1].category = category;
             this.addedExercises[id - 1].notes = notes;
             // TODO- need to add some logic here to dynamically clear / reset the different inputs to default or null values based on the selected category (strength vs cardio vs flexibility)
+        },
+        deleteExercise: function(order) {
+            this.addedExercises.splice(order - 1, 1);
+
+            this.addedExercises.forEach((exercise, index) => {
+                exercise.order = index + 1;
+            });
+        },
+        addExerciseSet: function(exerciseId) {
+            this.addedExercises[exerciseId - 1].sets.push({
+                id: this.addedExercises[exerciseId - 1].sets.length + 1,
+                order: this.addedExercises[exerciseId - 1].sets.length + 1,
+                type: "Normal"
+            });
         },
         updateExerciseSet: function(exerciseId, setId, type, minutes, seconds, distance, distanceUnitType, calories, reps, weight, weightUnitType, notes) {
             const sets = this.addedExercises[exerciseId - 1].sets;
@@ -86,6 +63,19 @@ window.addEventListener("appsetupcompleted", function () {
             sets[setId - 1].weight = weight;
             sets[setId - 1].weightUnitType = weightUnitType;
             sets[setId - 1].notes = notes;
+        },
+        deleteExerciseSet: function(exerciseId, order) {
+            const exercise = this.addedExercises[exerciseId - 1];
+
+            if (exercise.sets.length <= 1) {
+                return;
+            }
+            
+            exercise.sets.splice(order - 1, 1);
+            
+            exercise.sets.forEach((set, index) => {
+                set.order = index + 1;
+            });
         }
     })
 
@@ -120,10 +110,10 @@ window.addEventListener("appsetupcompleted", function () {
             }
         },
         template: `
-            <div class="p-4">
+            <div class="p-4" :class='(setId > 1) ? "border border-light-subtle border-top-4 border-start-0 border-end-0" : ""'>
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="mb-0" style="padding-top: 0.15rem;">1</h5>
-                    <i class="fa-solid fa-circle-minus fa-lg"></i> 
+                    <h5 class="mb-0" style="padding-top: 0.15rem;">{{ set.order }}</h5>
+                    <i @click="workoutStore.deleteExerciseSet(exerciseId, set.order)" class="fa-solid fa-circle-minus fa-lg"></i> 
                 </div>
                 <div class="d-flex flex-column gap-2 mb-4">
                     <label for="set-type">Type</label>
@@ -173,6 +163,7 @@ window.addEventListener("appsetupcompleted", function () {
     const exerciseComponent = {
         props: {
             id: Number,
+            order: Number,
             name: String,
             notes: String,
             category: String,
@@ -181,7 +172,6 @@ window.addEventListener("appsetupcompleted", function () {
         data() {
             return {
                 workoutStore,
-                exerciseId: this.id,
                 exerciseName: this.name,
                 exerciseNotes: this.notes,
                 exerciseCategory: this.category,
@@ -198,17 +188,17 @@ window.addEventListener("appsetupcompleted", function () {
             <div class="accordion mb-4" id="exerciseAccordion" draggable="true">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
-                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + exerciseId" aria-expanded="true" :aria-controls="exerciseId">
-                        <span>{{ exerciseId }}</span>&nbsp; - &nbsp;<span>{{ exerciseName }}</span>
+                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + id" aria-expanded="true" :aria-controls="id">
+                        <span>{{ order }}</span>&nbsp; - &nbsp;<span class="exercise-name">{{ exerciseName }}</span>
                     </button>
                     </h2>
-                    <div :id="exerciseId" class="accordion-collapse collapse show" data-bs-parent="#exerciseAccordion">
+                    <div :id="id" class="accordion-collapse collapse show" data-bs-parent="#exerciseAccordion">
                     <div class="accordion-body mb-2">
                         <div class="card-body">
                             <h5 class="mb-2">
-                                <span>{{ exerciseId }}</span> - <input v-model="exerciseName" @input="updateExercise()" type="text" class="fw-bold" contenteditable="true" />
+                                <span>{{ order }}</span> - <input v-model="exerciseName" @input="updateExercise()" type="text" class="fw-bold" contenteditable="true" placeholder="Add Exercise Name" />
                             </h5>
-                            <input v-model="exerciseNotes" @input="updateExercise()" type="text" class="optional-exercise-notes mb-4" contenteditable="true" placeholder="Add Exercise Notes (Optional)"></p>
+                            <input v-model="exerciseNotes" @input="updateExercise()" type="text" class="optional-exercise-notes mb-4" contenteditable="true" placeholder="Add Exercise Notes (Optional)" />
                             <div class="d-flex flex-column gap-2 mb-4">
                                 <label for="exercise-type">Category</label>
                                 <p-select v-model="exerciseCategory" @change="updateExercise()" :options="exerciseTypes" class="w-100" id="exercise-type" name="exercise-type" checkmark :highlightOnSelect="false" />
@@ -217,15 +207,15 @@ window.addEventListener("appsetupcompleted", function () {
                                 <p class="mb-2">Sets</p>
                                 <div class="card mb-3">
                                     <div class="card-body p-0">
-                                        <set-component v-for="set in sets" :key="set.id" :exerciseId="exerciseId" :category="exerciseCategory" :set="set"></set-component>
-                                        <button type="button" class="btn btn-outline-dark border-0 border-top rounded-top-0 w-100 p-2" style="border-color: rgba(0, 0, 0, 0.176);">
+                                        <set-component v-for="set in sets" :key="set.id" :exerciseId="id" :category="exerciseCategory" :set="set"></set-component>
+                                        <button @click="workoutStore.addExerciseSet(id)"  type="button" class="btn btn-outline-dark border-0 border-top rounded-top-0 w-100 p-2" style="border-color: rgba(0, 0, 0, 0.176);">
                                             <i class="fa-solid fa-circle-plus"></i> Add Set
                                         </button>
                                     </div>
                                 </div>
                             </div>
                             <section class="d-flex flex-column d-xl-block text-xl-center">
-                                <button type="button" class="btn btn-outline-danger">
+                                <button @click="workoutStore.deleteExercise(order)" type="button" class="btn btn-outline-danger">
                                     <i class="fa-solid fa-trash"></i> Delete Exercise
                                 </button>   
                             </section>
@@ -259,8 +249,19 @@ window.addEventListener("appsetupcompleted", function () {
                 setTypes: ["Normal", "Warm-up"]
             }
         }, 
-        methods() {
-            // Define component methods here (e.g., edit, delete, format helpers)
+        methods: {
+            addExercise: function() {
+                workoutStore.addExercise({
+                    setup: this.selectedExerciseSetup, 
+                    category: this.selectedNewExerciseType, 
+                    routine: this.selectedExerciseRoutine
+                });
+
+                this.showAddExerciseModal = false
+            },
+            addWorkoutEntry: function() {
+                console.log(workoutStore.addedExercises);
+            }
         },
         mounted() {
             // Add comment here
