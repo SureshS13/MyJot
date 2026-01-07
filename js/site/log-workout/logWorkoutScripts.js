@@ -4,6 +4,10 @@
 const loadingSpinner = document.querySelector(".loader");
 const vueAppContainer = document.querySelector("#app");
 
+let hasReorderOccurred = false;
+let currentDraggedExercise, dropTarget, isBefore;
+let addedLineBreak;
+
 /**********************************************************/
 /* Event listeners, Method Calls, and Other Misc. Actions */
 /**********************************************************/
@@ -13,29 +17,105 @@ window.addEventListener("appsetupcompleted", function () {
     // Import Vue's core API methods from the global Vue object
     const { createApp, reactive } = Vue
 
+    const testRoutineExercises = [
+        {
+            order: 1,
+            name: "Curls",
+            notes: null,
+            category: "Strength Training",
+            sets: [
+                {
+                    id: 1,
+                    order: 1,
+                    type: "Normal",
+                    reps: 3,
+                    weight: 20,
+                    weightUnitType: "kgs",
+                    setNotes: "Test notes one"
+                }
+            ]
+        },
+        {
+            order: 2,
+            name: "Treadmill",
+            notes: null,
+            category: "Cardio",
+            sets: [
+                {
+                    id: 1,
+                    order: 2,
+                    type: "Normal",
+                    minutes: 2,
+                    seconds: 3,
+                    distance: 2.6,
+                    distanceUnitType: "miles",
+                    calories: 300,
+                    setNotes: "Test notes two"
+                }
+            ]
+        },
+        {
+            order: 3,
+            name: "Stretch",
+            notes: "Test notes",
+            category: "Flexibility",
+            sets: [
+                {
+                    id: 1,
+                    order: 3,
+                    type: "Warm-up",
+                    setNotes: "These are test notes"
+                }
+            ]
+        }
+    ];
+
     // Add comment here
     const workoutStore = reactive({
         addedExercises: [],
         addExercise: function({ setup = "new", category = "Strength Training", routine }) {
+            // need to add a method to validate exercise objects that I can call when doing any operations with the store
             console.log(setup)
-            this.addedExercises.push({
-                id: this.addedExercises.length + 1,
-                order: this.addedExercises.length + 1,
-                category: category,
-                sets: [
-                    {
-                        id: 1,
-                        order: 1,
-                        type: "Normal"
-                    }
-                ]
-            });
+
+            if (setup === "existing") {
+                // this will expect an array of objects, rough implementation for now:
+
+                // hardcoded for now:
+                routine = testRoutineExercises;
+
+                for (const exercise of routine) {
+                    exercise.id = this.addedExercises.length + 1;
+                    exercise.order = this.addedExercises.length + 1;
+
+                    this.addedExercises.push(exercise);
+                }
+            } else {
+                this.addedExercises.push({
+                    id: this.addedExercises.length + 1,
+                    order: this.addedExercises.length + 1,
+                    category: category,
+                    sets: [
+                        {
+                            id: 1,
+                            order: 1,
+                            type: "Normal"
+                        }
+                    ]
+                });
+            }
         },
         updateExercise: function(id, name, category, notes) {
             this.addedExercises[id - 1].name = name;
             this.addedExercises[id - 1].category = category;
             this.addedExercises[id - 1].notes = notes;
             // TODO- need to add some logic here to dynamically clear / reset the different inputs to default or null values based on the selected category (strength vs cardio vs flexibility)
+        },
+        updateExerciseOrder: function() {
+            for (let i = 0; i < this.addedExercises.length; i++) {
+                const exercise = this.addedExercises[i];
+
+                exercise.order = i + 1;
+            }
         },
         deleteExercise: function(order) {
             this.addedExercises.splice(order - 1, 1);
@@ -182,17 +262,58 @@ window.addEventListener("appsetupcompleted", function () {
         methods: {
             updateExercise() {
                 this.workoutStore.updateExercise(this.id, this.exerciseName, this.exerciseCategory, this.exerciseNotes)
+            },
+            onDragStart(event) {
+                currentDraggedExercise = event.currentTarget;
+            },
+            onDragOver(event) {
+                event.preventDefault();
+                
+                if (!event.currentTarget.isSameNode(currentDraggedExercise)) {
+                    dropTarget = event.currentTarget;
+                    const dropTargetY = (dropTarget.getBoundingClientRect().top + ((dropTarget.getBoundingClientRect().bottom - dropTarget.getBoundingClientRect().top)/2));
+                    
+                    addedLineBreak?.remove();
+                    addedLineBreak = document.createElement("hr");
+
+                    if (event.clientY < dropTargetY) {
+                        isBefore = true;
+                        dropTarget.insertAdjacentElement("beforebegin", addedLineBreak);
+                    } else {
+                        isBefore =  false;
+                        dropTarget.insertAdjacentElement("afterend", addedLineBreak);
+                    }
+                }
+            },
+            onDrop() {
+                currentDraggedExercise?.remove();
+
+                if (isBefore) {
+                    dropTarget.insertAdjacentElement("beforebegin", currentDraggedExercise);
+                } else {
+                    dropTarget.insertAdjacentElement("afterend", currentDraggedExercise);
+                }
+
+                hasReorderOccurred = true;
+            },
+            onDragEnd() {
+                addedLineBreak?.remove();
+
+                // Add comment here
+                if (hasReorderOccurred) {
+                    workoutStore.updateExerciseOrder();
+                }
             }
         },
         template: `
-            <div class="accordion mb-4" id="exerciseAccordion" draggable="true">
+            <div @dragstart="onDragStart" @dragover="onDragOver" @drop="onDrop" @dragend="onDragEnd" class="accordion exercise-accordion mb-4" :id="'exerciseAccordion' + id" draggable="true">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                     <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + id" aria-expanded="true" :aria-controls="id">
                         <span>{{ order }}</span>&nbsp; - &nbsp;<span class="exercise-name">{{ exerciseName }}</span>
                     </button>
                     </h2>
-                    <div :id="id" class="accordion-collapse collapse show" data-bs-parent="#exerciseAccordion">
+                    <div :id="id" class="accordion-collapse collapse show" :data-bs-parent="'#exerciseAccordion' + id">
                     <div class="accordion-body mb-2">
                         <div class="card-body">
                             <h5 class="mb-2">
@@ -269,9 +390,6 @@ window.addEventListener("appsetupcompleted", function () {
 
             // Add comment here
             [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-        },
-        updated() {
-            console.log(this.inputtedLogName, this.selectedDateTime, this.inputtedBodyWeight, this.selectedUnitType, this.inputtedNotes, this.selectedExerciseSetup, this.selectedNewExerciseType, this.selectedExerciseType, this.selectedSetType);
         }
     })
     
