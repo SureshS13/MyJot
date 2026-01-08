@@ -111,6 +111,25 @@ window.addEventListener("appsetupcompleted", function () {
             // TODO- need to add some logic here to dynamically clear / reset the different inputs to default or null values based on the selected category (strength vs cardio vs flexibility)
         },
         updateExerciseOrder: function() {
+            const reorderedExercises = document.querySelectorAll(".exercise-accordion");
+            const updatedExerciseOrderMap = new Map();
+
+            reorderedExercises.forEach((ex, index) => {
+                updatedExerciseOrderMap.set(parseInt(ex.getAttribute("data-exercise-id")), index);
+            });
+            
+            this.addedExercises.sort(function(exA, exB) {
+                const exAOrder = updatedExerciseOrderMap.get(exA.id), exBOrder = updatedExerciseOrderMap.get(exB.id);
+                
+                if (exAOrder < exBOrder) {
+                    return -1;
+                } else if (exAOrder > exBOrder) {
+                    return 1;
+                } else {
+                    throw new Error("there should never be an equal order");
+                }
+            });
+        
             for (let i = 0; i < this.addedExercises.length; i++) {
                 const exercise = this.addedExercises[i];
 
@@ -285,7 +304,11 @@ window.addEventListener("appsetupcompleted", function () {
                     }
                 }
             },
-            onDrop() {
+            onDrop(event) {
+                if (event.currentTarget.isSameNode(currentDraggedExercise)) {
+                    return;
+                }
+
                 currentDraggedExercise?.remove();
 
                 if (isBefore) {
@@ -306,10 +329,11 @@ window.addEventListener("appsetupcompleted", function () {
             }
         },
         template: `
-            <div @dragstart="onDragStart" @dragover="onDragOver" @drop="onDrop" @dragend="onDragEnd" class="accordion exercise-accordion mb-4" :id="'exerciseAccordion' + id" draggable="true">
+            <div @dragstart="onDragStart" @dragover="onDragOver" @drop="onDrop" @dragend="onDragEnd" class="accordion exercise-accordion mb-4" :id="'exerciseAccordion' + id" :data-exercise-id="id" draggable="true">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                     <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + id" aria-expanded="true" :aria-controls="id">
+                        <i class="fa-solid fa-arrows-up-down-left-right me-2"></i>
                         <span>{{ order }}</span>&nbsp; - &nbsp;<span class="exercise-name">{{ exerciseName }}</span>
                     </button>
                     </h2>
