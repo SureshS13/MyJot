@@ -30,11 +30,14 @@
   </head>
   <body>
     <div class="container" id="log-workout-page-container">
-        <header class="mb-5 text-center text-xl-start">
-            <a class="text-black text-decoration-none" href="/pages/log.html">
+        <header class="d-flex flex-column align-items-center mb-5">
+            <a class="text-black text-decoration-none align-self-xl-start" href="/pages/log.html">
                 <i class="fa-solid fa-caret-left"></i>
                 Return to Homepage
             </a>
+            <div class="alert alert-danger mt-5 d-none" id="log-workout-validation-errors-alert" role="alert">
+                
+            </div>
         </header>
         <section class="d-flex flex-column align-items-center">
             <h3 class="align-self-xl-start mb-4">Log Workout</h3>

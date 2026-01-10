@@ -2,6 +2,8 @@
 /* Const & let variable declarations & initializations */
 /*******************************************************/
 const loadingSpinner = document.querySelector(".loader");
+const logWorkoutPageHeader = document.querySelector("header");
+const validationAlertComponent = logWorkoutPageHeader.querySelector("#log-workout-validation-errors-alert");
 const vueAppContainer = document.querySelector("#app");
 
 let hasReorderOccurred = false;
@@ -143,6 +145,39 @@ window.addEventListener("appsetupcompleted", function () {
                 exercise.order = index + 1;
             });
         },
+        validateAllExercises: function() {
+            if (!this.addedExercises.length) {
+                throw new Error("A minimum of one or more exercises is required for a workout entry.");
+            }
+
+            // Add comment here
+            this.addedExercises.forEach(exercise => {
+                if (!exercise.name) {
+                    throw new Error("All exercises must have a valid name.");
+                }
+
+                if (!exercise.sets || !exercise.sets.length) {
+                    throw new Error("A minimum of one or more sets is required per exercise.");
+                }
+
+                switch (exercise.category) {
+                    case "Strength Training":
+                        this.validateStrengthTrainingExerciseSets(exercise.sets);
+                        break;
+
+                    case "Cardio":
+                        this.validateCardioExerciseSets(exercise.sets);
+                        break;
+
+                    case "Flexibility":
+                        // No validation required for flexibility exercises
+                        break;
+
+                    default:
+                        throw new Error("Invalid workout category.");
+                }
+            });
+        },
         addExerciseSet: function(exerciseId) {
             this.addedExercises[exerciseId - 1].sets.push({
                 id: this.addedExercises[exerciseId - 1].sets.length + 1,
@@ -175,6 +210,32 @@ window.addEventListener("appsetupcompleted", function () {
             exercise.sets.forEach((set, index) => {
                 set.order = index + 1;
             });
+        },
+        validateStrengthTrainingExerciseSets: function(sets) {
+            sets.forEach(set => {
+                if (!set.reps) {
+                    throw new Error("A valid amount of reps is required for each strength training set.");
+                }
+
+                if (!set.weight) {
+                    throw new Error("A valid weight is required for each strength training set.");
+                }
+            });
+        },
+        validateCardioExerciseSets: function(sets) {
+            sets.forEach(set => {
+                if (!set.minutes) {
+                    throw new Error("A valid amount of minutes is required for each cardio set.");
+                }
+
+                if (!set.seconds) {
+                    throw new Error("A valid amount of seconds is required for each cardio set.");
+                }
+
+                if (!set.distance) {
+                    throw new Error("A valid distance amount is required for each cardio set.");
+                }
+            });
         }
     })
 
@@ -199,8 +260,8 @@ window.addEventListener("appsetupcompleted", function () {
                 setWeightUnitType: this.set.weightUnitType,
                 setNotes: this.set.setNotes,
                 setTypes: ["Normal", "Warm-up"],
-                weightUnitTypes: ["", "lbs", "kgs"],
-                distanceUnitTypes: ["", "miles", "kilometers"]
+                weightUnitTypes: ["lbs", "kgs"],
+                distanceUnitTypes: ["miles", "kilometers"]
             }
         },
         methods: {
@@ -405,7 +466,42 @@ window.addEventListener("appsetupcompleted", function () {
                 this.showAddExerciseModal = false
             },
             addWorkoutEntry: function() {
-                console.log(workoutStore.addedExercises);
+                try {
+                    this.validateWorkoutEntry();
+
+                    console.log(workoutStore.addedExercises);
+
+                    // Add comment here
+                    logWorkoutPageHeader.classList.remove("mb-4");
+                    logWorkoutPageHeader.classList.add("mb-5");
+                    validationAlertComponent.classList.add("d-none");
+                } catch (error) {
+                    // Add comment here
+                    validationAlertComponent.textContent = error.message;
+
+                    // Add comment here
+                    logWorkoutPageHeader.classList.remove("mb-5");
+                    logWorkoutPageHeader.classList.add("mb-4");
+                    validationAlertComponent.classList.remove("d-none");
+
+                    // Add comment here
+                    validationAlertComponent.scrollIntoView(false);
+                }
+            },
+            validateWorkoutEntry: function() {
+                if (!this.inputtedLogName) {
+                    throw new Error("A valid log name is required.");
+                }
+
+                if (!this.selectedDateTime) {
+                    throw new Error("A valid date & time is required.");
+                }
+
+                if (!this.inputtedBodyWeight) {
+                    throw new Error("A valid bodyweight is required.");
+                }   
+
+                this.workoutStore.validateAllExercises();
             }
         },
         mounted() {
