@@ -6,9 +6,9 @@ const logWorkoutPageHeader = document.querySelector("header");
 const validationAlertComponent = logWorkoutPageHeader.querySelector("#log-workout-validation-errors-alert");
 const vueAppContainer = document.querySelector("#app");
 
-let hasReorderOccurred = false;
-let currentDraggedExercise, dropTarget, isBefore;
-let addedLineBreak;
+let orderChanged = false;
+let currentDraggedExercise, dropTarget, insertBeforeTarget;
+let dropIndicator;
 
 /**********************************************************/
 /* Event listeners, Method Calls, and Other Misc. Actions */
@@ -72,16 +72,13 @@ window.addEventListener("appsetupcompleted", function () {
         }
     ];
 
-    // Add comment here
+    // Vue reactive store that manages all workout state and exercise/set operations on the page
     const workoutStore = reactive({
         addedExercises: [],
         addExercise: function({ setup = "new", category = "Strength Training", routine }) {
-            // need to add a method to validate exercise objects that I can call when doing any operations with the store
-            console.log(setup)
-
+            console.error("this method still needs jsdoc wheni ts finsihe dbeing implented");
             if (setup === "existing") {
                 // this will expect an array of objects, rough implementation for now:
-
                 // hardcoded for now:
                 routine = testRoutineExercises;
 
@@ -106,38 +103,70 @@ window.addEventListener("appsetupcompleted", function () {
                 });
             }
         },
+        /**
+        * Updates an existing exercise with new values and resets its sets if the category changes.
+        * @param {number} id The 1‑based index of the exercise to update.
+        * @param {string} name The updated exercise name.
+        * @param {string} category The updated exercise category.
+        * @param {string} notes Additional notes for the exercise.
+        */
         updateExercise: function(id, name, category, notes) {
-            this.addedExercises[id - 1].name = name;
-            this.addedExercises[id - 1].category = category;
-            this.addedExercises[id - 1].notes = notes;
-            // TODO- need to add some logic here to dynamically clear / reset the different inputs to default or null values based on the selected category (strength vs cardio vs flexibility)
+            const exercise = this.addedExercises[id - 1];
+
+            // If the category changes, wipe all set-specific data except id / type,
+            // since different categories require different set fields.
+            if (exercise.category !== category) {
+                exercise.sets.forEach(setObj => {
+                    for (const key of Object.keys(setObj)) {
+                        if (key !== "id" && key !== "type") {
+                            delete setObj[key];
+                        }
+                    }
+                }); 
+            }
+
+            // Update the exercise's core fields with the new values.
+            exercise.name = name;
+            exercise.notes = notes;
+            exercise.category = category;
         },
+        /**
+        * Recalculates and updates the order of exercises based on their current DOM position inside the accordion list.
+        */
         updateExerciseOrder: function() {
             const reorderedExercises = document.querySelectorAll(".exercise-accordion");
-            const updatedExerciseOrderMap = new Map();
+
+            // Map each exercise’s DOM ID to its UI index as unique key–value pairs for O(1) lookup during sorting.
+            const exerciseOrderMap = new Map();
 
             reorderedExercises.forEach((ex, index) => {
-                updatedExerciseOrderMap.set(parseInt(ex.getAttribute("data-exercise-id")), index);
+                exerciseOrderMap.set(parseInt(ex.getAttribute("data-exercise-id")), index);
             });
             
-            this.addedExercises.sort(function(exA, exB) {
-                const exAOrder = updatedExerciseOrderMap.get(exA.id), exBOrder = updatedExerciseOrderMap.get(exB.id);
+            // Sort the internal exercise array so its order matches the order reflected in the DOM, using the Map created above.
+            this.addedExercises.sort(function(exerciseA, exerciseB) {
+                const orderA = exerciseOrderMap.get(exerciseA.id), orderB = exerciseOrderMap.get(exerciseB.id);
                 
-                if (exAOrder < exBOrder) {
+                if (orderA < orderB) {
                     return -1;
-                } else if (exAOrder > exBOrder) {
+                } else if (orderA > orderB) {
                     return 1;
                 } else {
-                    throw new Error("there should never be an equal order");
+                    throw new Error("Invalid state: two exercises share the same UI order");
                 }
             });
         
+            // After sorting, assign each exercise a sequential order value so the data model reflects the new sorted position.
             for (let i = 0; i < this.addedExercises.length; i++) {
                 const exercise = this.addedExercises[i];
 
                 exercise.order = i + 1;
             }
         },
+        /**
+        * Deletes an exercise at the given order position and reassigns sequential order values to the remaining exercises.
+        * @param {number} order The 1‑based order position of the exercise to remove.
+        */
         deleteExercise: function(order) {
             this.addedExercises.splice(order - 1, 1);
 
@@ -145,19 +174,27 @@ window.addEventListener("appsetupcompleted", function () {
                 exercise.order = index + 1;
             });
         },
+        /**
+        * Validates all exercises in the current workout entry. Ensures that:
+        * - At least one exercise exists
+        * - Each exercise has a valid name
+        * - Each exercise contains at least one set
+        * - Category-specific validation rules are applied
+        * @throws {Error} If any validation rule fails.
+        */
         validateAllExercises: function() {
             if (!this.addedExercises.length) {
-                throw new Error("A minimum of one or more exercises is required for a workout entry.");
+                throw new Error("Please add at least one exercise before saving your workout.");
             }
 
             // Add comment here
             this.addedExercises.forEach(exercise => {
                 if (!exercise.name) {
-                    throw new Error("All exercises must have a valid name.");
+                    throw new Error("Every exercise must include a name.");
                 }
 
                 if (!exercise.sets || !exercise.sets.length) {
-                    throw new Error("A minimum of one or more sets is required per exercise.");
+                    throw new Error("Each exercise must include at least one set.");
                 }
 
                 switch (exercise.category) {
@@ -170,14 +207,18 @@ window.addEventListener("appsetupcompleted", function () {
                         break;
 
                     case "Flexibility":
-                        // No validation required for flexibility exercises
+                        // Flexibility exercises do not require set-level validation
                         break;
 
                     default:
-                        throw new Error("Invalid workout category.");
+                        throw new Error("The selected exercise category is not recognized.");
                 }
             });
         },
+        /**
+        * Adds a new set to the specified exercise. The new set is assigned a sequential id and order based on the current number of sets.
+        * @param {number} exerciseId The 1‑based identifier of the exercise to update.
+        */
         addExerciseSet: function(exerciseId) {
             this.addedExercises[exerciseId - 1].sets.push({
                 id: this.addedExercises[exerciseId - 1].sets.length + 1,
@@ -185,6 +226,22 @@ window.addEventListener("appsetupcompleted", function () {
                 type: "Normal"
             });
         },
+        /**
+        * Updates the properties of a specific set within an exercise. 
+        * The exact fields updated may vary depending on the exercise category or future data model changes.
+        * @param {number} exerciseId The 1‑based identifier of the exercise containing the set.
+        * @param {number} setId The 1‑based identifier of the set to update.
+        * @param {string} type The set type (e.g., "Normal", "Warm-up", etc.).
+        * @param {number} [minutes] Optional duration in minutes.
+        * @param {number} [seconds] Optional duration in seconds.
+        * @param {number} [distance] Optional distance value.
+        * @param {string} [distanceUnitType] Unit of measurement for distance.
+        * @param {number} [calories] Optional calorie value.
+        * @param {number} [reps] Optional repetition count.
+        * @param {number} [weight] Optional weight value.
+        * @param {string} [weightUnitType] Unit of measurement for weight.
+        * @param {string} [notes] Optional notes for the set.
+        */
         updateExerciseSet: function(exerciseId, setId, type, minutes, seconds, distance, distanceUnitType, calories, reps, weight, weightUnitType, notes) {
             const sets = this.addedExercises[exerciseId - 1].sets;
             sets[setId - 1].type = type;
@@ -198,9 +255,16 @@ window.addEventListener("appsetupcompleted", function () {
             sets[setId - 1].weightUnitType = weightUnitType;
             sets[setId - 1].notes = notes;
         },
+        /**
+        * Deletes a specific set from an exercise. 
+        * Ensures that at least one set always remains and reassigns sequential order values after deletion.
+        * @param {number} exerciseId The 1‑based identifier of the exercise containing the set.
+        * @param {number} order The 1‑based order position of the set to remove.
+        */
         deleteExerciseSet: function(exerciseId, order) {
             const exercise = this.addedExercises[exerciseId - 1];
 
+            // Prevent deletion when only one set remains, since every exercise must retain at least one set
             if (exercise.sets.length <= 1) {
                 return;
             }
@@ -211,29 +275,42 @@ window.addEventListener("appsetupcompleted", function () {
                 set.order = index + 1;
             });
         },
+        /**
+        * Validates all sets within a strength training exercise. Ensures that each set
+        * contains the required fields (such as reps and weight) needed for a valid
+        * strength training entry.
+        * @param {Array<Object>} sets The collection of sets to validate.
+        * @throws {Error} If any required strength training field is missing or invalid.
+        */
         validateStrengthTrainingExerciseSets: function(sets) {
             sets.forEach(set => {
                 if (!set.reps) {
-                    throw new Error("A valid amount of reps is required for each strength training set.");
+                    throw new Error("Please enter the number of reps for each strength training set.");
                 }
 
                 if (!set.weight) {
-                    throw new Error("A valid weight is required for each strength training set.");
+                    throw new Error("Please enter the weight used for each strength training set.");
                 }
             });
         },
+        /**
+        * Validates all sets within a cardio exercise. Ensures that each set includes
+        * the required duration and distance fields needed for a valid cardio entry.
+        * @param {Array<Object>} sets The collection of cardio sets to validate.
+        * @throws {Error} If any required cardio field is missing or invalid.
+        */
         validateCardioExerciseSets: function(sets) {
             sets.forEach(set => {
                 if (!set.minutes) {
-                    throw new Error("A valid amount of minutes is required for each cardio set.");
+                    throw new Error("Please enter the number of minutes for each cardio set.");
                 }
 
                 if (!set.seconds) {
-                    throw new Error("A valid amount of seconds is required for each cardio set.");
+                    throw new Error("Please enter the number of seconds for each cardio set.");
                 }
 
                 if (!set.distance) {
-                    throw new Error("A valid distance amount is required for each cardio set.");
+                    throw new Error("Please enter the distance for each cardio set.");
                 }
             });
         }
@@ -265,6 +342,11 @@ window.addEventListener("appsetupcompleted", function () {
             }
         },
         methods: {
+            /**
+            * Updates the current set’s data in the workout store using the values
+            * bound to this component. This method forwards all relevant set fields
+            * to the store so the parent workout state remains in sync with the UI.
+            */
             updateExerciseSet() {
                 this.workoutStore.updateExerciseSet(this.exerciseId, this.setId, this.setType, this.setMinutes, this.setSeconds, this.setDistance, this.setDistanceUnitType, this.setCalories, this.setReps, this.setWeight, this.setWeightUnitType, this.setNotes);
             }
@@ -273,7 +355,7 @@ window.addEventListener("appsetupcompleted", function () {
             <div class="p-4" :class='(setId > 1) ? "border border-light-subtle border-top-4 border-start-0 border-end-0" : ""'>
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="mb-0" style="padding-top: 0.15rem;">{{ set.order }}</h5>
-                    <i @click="workoutStore.deleteExerciseSet(exerciseId, set.order)" class="fa-solid fa-circle-minus fa-lg"></i> 
+                    <i @click="workoutStore.deleteExerciseSet(exerciseId, set.order)" class="fa-solid fa-circle-minus fa-lg" :class="(workoutStore.addedExercises[exerciseId - 1].sets.length <= 1) ? 'd-none' : ''"></i> 
                 </div>
                 <div class="d-flex flex-column gap-2 mb-4">
                     <label for="set-type">Type</label>
@@ -340,51 +422,84 @@ window.addEventListener("appsetupcompleted", function () {
             }
         },
         methods: {
+            /**
+            * Updates the exercise’s core fields (name, category, notes) in the workout store.
+            * Keeps the store in sync with the values edited inside this component.
+            */
             updateExercise() {
                 this.workoutStore.updateExercise(this.id, this.exerciseName, this.exerciseCategory, this.exerciseNotes)
             },
+            /**
+            * Handles the start of a drag operation. Stores a reference to the element
+            * being dragged so it can be compared and repositioned during drag events.
+            * @param {DragEvent} event The dragstart event.
+            */
             onDragStart(event) {
                 currentDraggedExercise = event.currentTarget;
             },
+            /**
+            * Handles drag-over behavior for exercise reordering. Enables dropping,
+            * determines whether the dragged item should be placed before or after
+            * the hovered element, and visually displays the insertion position.
+            * @param {DragEvent} event The dragover event.
+            */
             onDragOver(event) {
-                event.preventDefault();
+                event.preventDefault(); // Required to allow dropping
                 
+                // Only process if hovering over a different exercise element
                 if (!event.currentTarget.isSameNode(currentDraggedExercise)) {
+                    // Track the element currently being hovered as the potential drop target
                     dropTarget = event.currentTarget;
-                    const dropTargetY = (dropTarget.getBoundingClientRect().top + ((dropTarget.getBoundingClientRect().bottom - dropTarget.getBoundingClientRect().top)/2));
                     
-                    addedLineBreak?.remove();
-                    addedLineBreak = document.createElement("hr");
+                    // Calculate the vertical midpoint of the drop target to determine before / after placement
+                    const rect = dropTarget.getBoundingClientRect(); 
+                    const dropTargetMidY = rect.top + (rect.height / 2);
+                    
+                    // Remove any previously added visual indicator and create a new one
+                    dropIndicator?.remove();
+                    dropIndicator = document.createElement("hr");
 
-                    if (event.clientY < dropTargetY) {
-                        isBefore = true;
-                        dropTarget.insertAdjacentElement("beforebegin", addedLineBreak);
+                    // Insert the visual indicator before or after the target based on cursor position
+                    if (event.clientY < dropTargetMidY) {
+                        insertBeforeTarget = true;
+                        dropTarget.insertAdjacentElement("beforebegin", dropIndicator);
                     } else {
-                        isBefore =  false;
-                        dropTarget.insertAdjacentElement("afterend", addedLineBreak);
+                        insertBeforeTarget =  false;
+                        dropTarget.insertAdjacentElement("afterend", dropIndicator);
                     }
                 }
             },
+            /**
+            * Finalizes the drop action by inserting the dragged exercise element into its new position relative to the drop target.
+            * @param {DragEvent} event The drop event.
+            */
             onDrop(event) {
+                // Ignore if dropped onto itself
                 if (event.currentTarget.isSameNode(currentDraggedExercise)) {
                     return;
                 }
-
+                
+                // Remove the dragged element from its old position
                 currentDraggedExercise?.remove();
 
-                if (isBefore) {
+                // Insert the dragged element before or after the drop target
+                if (insertBeforeTarget) {
                     dropTarget.insertAdjacentElement("beforebegin", currentDraggedExercise);
                 } else {
                     dropTarget.insertAdjacentElement("afterend", currentDraggedExercise);
                 }
 
-                hasReorderOccurred = true;
+                orderChanged = true;
             },
+            /**
+            * Cleans up visual indicators after dragging ends and triggers a store update if the exercise order has changed.
+            */
             onDragEnd() {
-                addedLineBreak?.remove();
+                // Remove the temporary line indicator
+                dropIndicator?.remove();
 
-                // Add comment here
-                if (hasReorderOccurred) {
+                // If a reorder occurred, update the exercise order in the store
+                if (orderChanged) {
                     workoutStore.updateExerciseOrder();
                 }
             }
@@ -456,6 +571,10 @@ window.addEventListener("appsetupcompleted", function () {
             }
         }, 
         methods: {
+            /**
+            * Adds a new exercise to the workout using the selected setup, category, and routine. 
+            * Closes the "Add Exercise" modal after the exercise is created.
+            */
             addExercise: function() {
                 workoutStore.addExercise({
                     setup: this.selectedExerciseSetup, 
@@ -465,29 +584,37 @@ window.addEventListener("appsetupcompleted", function () {
 
                 this.showAddExerciseModal = false
             },
+            /**
+            * Attempts to submit the workout entry. 
+            * Validates all fields, updates UI spacing and hides the validation alert on success. 
+            * If validation fails, displays the error message and adjusts the layout accordingly.
+            */
             addWorkoutEntry: function() {
                 try {
                     this.validateWorkoutEntry();
 
-                    console.log(workoutStore.addedExercises);
-
-                    // Add comment here
+                    // Adjust header spacing and hide validation alert after successful validation
                     logWorkoutPageHeader.classList.remove("mb-4");
                     logWorkoutPageHeader.classList.add("mb-5");
                     validationAlertComponent.classList.add("d-none");
                 } catch (error) {
-                    // Add comment here
+                    // Display the validation error message to the user
                     validationAlertComponent.textContent = error.message;
 
-                    // Add comment here
+                    // Restore compact header spacing and show the validation alert
                     logWorkoutPageHeader.classList.remove("mb-5");
                     logWorkoutPageHeader.classList.add("mb-4");
                     validationAlertComponent.classList.remove("d-none");
 
-                    // Add comment here
+                    // Ensure the alert is visible by scrolling it into view
                     validationAlertComponent.scrollIntoView(false);
                 }
             },
+            /**
+            * Validates the workout entry fields before submission.
+            * Ensures that the log name, date/time, and bodyweight are provided, then delegates exercise-level validation to the workout store.
+            * @throws {Error} If any required workout field is missing or invalid.
+            */
             validateWorkoutEntry: function() {
                 if (!this.inputtedLogName) {
                     throw new Error("A valid log name is required.");
@@ -505,10 +632,10 @@ window.addEventListener("appsetupcompleted", function () {
             }
         },
         mounted() {
-            // Add comment here
+             // Enable the DragDropTouch polyfill so the page's drag‑and‑drop functionality works on mobile and touch devices
             window.DragDropTouch.enable();
 
-            // Add comment here
+             // Initialize all Bootstrap tooltips found in the DOM for elements using the data-bs-toggle="tooltip" attribute
             [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
         }
     })
@@ -525,6 +652,7 @@ window.addEventListener("appsetupcompleted", function () {
         .component('p-input-number', PrimeVue.InputNumber)
         .component('p-dialog', PrimeVue.Dialog);
 
+    // Register custom Exercise and Set components globally so they can be used throughout the app
     app.component("exercise-component", exerciseComponent)
         .component("set-component", setComponent);
     
