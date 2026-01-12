@@ -2,6 +2,8 @@
 /* Const & let variable declarations & initializations */
 /*******************************************************/
 const loadingSpinner = document.querySelector(".loader");
+const logMealPageHeader = document.querySelector("header");
+const validationAlertComponent = logMealPageHeader.querySelector("#log-meal-validation-errors-alert");
 const vueAppContainer = document.querySelector("#app");
 
 /**********************************************************/
@@ -29,15 +31,59 @@ window.addEventListener("appsetupcompleted", function () {
                 inputtedFats: null
             }
         },
-        methods() {
-            // Define component methods here (e.g., edit, delete, format helpers)
+        methods: {
+            /**
+            * Attempts to submit the meal entry. 
+            * Validates all fields, updates UI spacing and hides the validation alert on success. 
+            * If validation fails, displays the error message and adjusts the layout accordingly.
+            */
+            addMealEntry: function() {
+                try {
+                    this.validateMealEntry();
+
+                    // Adjust header spacing and hide validation alert after successful validation
+                    logMealPageHeader.classList.remove("mb-4");
+                    logMealPageHeader.classList.add("mb-5");
+                    validationAlertComponent.classList.add("d-none");
+                } catch (error) {
+                    // Display the validation error message to the user
+                    validationAlertComponent.textContent = error.message;
+
+                    // Restore compact header spacing and show the validation alert
+                    logMealPageHeader.classList.remove("mb-5");
+                    logMealPageHeader.classList.add("mb-4");
+                    validationAlertComponent.classList.remove("d-none");
+
+                    // Ensure the alert is visible by scrolling it into view
+                    validationAlertComponent.scrollIntoView(false);
+                }
+            },
+            /**
+            * Validates the meal entry fields before submission.
+            * Ensures that the log name, date/time, meal name, and meal type are provided.
+            * @throws {Error} If any required workout field is missing or invalid.
+            */
+            validateMealEntry: function() {
+                if (!this.inputtedLogName) {
+                    throw new Error("A valid log name is required.");
+                }
+
+                if (!this.selectedDateTime) {
+                    throw new Error("A valid date & time is required.");
+                }
+
+                if (!this.inputtedMealName) {
+                    throw new Error("A valid meal name is required.");
+                }
+
+                if (!this.selectedMealType) {
+                    throw new Error("A valid meal type is required.");
+                }
+            }
         },
         mounted() {
-            // Add comment here
+            // Initialize all Bootstrap tooltips found in the DOM for elements using the data-bs-toggle="tooltip" attribute
             [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-        },
-        updated() {
-            console.log(this.inputtedLogName, this.selectedDateTime, this.inputtedNotes, this.inputtedMealName, this.selectedMealType, this.inputtedCalories, this.inputtedProtein, this.inputtedCarbs, this.inputtedFats);
         }
     })
     
