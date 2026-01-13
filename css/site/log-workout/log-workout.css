@@ -11,7 +11,7 @@
         padding-bottom: 6rem; /* Accounts for 4rem mobile navbar height plus 2rem extra spacing on the log meal page */
     }
 
-    #log-workout-validation-errors-alert, #app {
+    #log-workout-validation-errors-alert, #log-workout-page-title, #app {
         width: 85%;
     }
 }

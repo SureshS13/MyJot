@@ -552,6 +552,10 @@ window.addEventListener("appsetupcompleted", function () {
     const app = createApp({
         data() {
             return {
+                isAddRoutineMode: false,
+                isEditRoutineMode: false,
+                isEditWorkoutMode: false,
+                ctaButtonText: "Add Workout Entry",
                 workoutStore,
                 inputtedLogName: null,
                 selectedDateTime: null,
@@ -629,6 +633,55 @@ window.addEventListener("appsetupcompleted", function () {
                 }   
 
                 this.workoutStore.validateAllExercises();
+            }
+        },
+        beforeMount() {
+            // Add comment here
+            const queryParams = new URLSearchParams(window.location.search);  
+            
+            console.warn("TODO - Need to add additional validation here to ensure that the workout/routine name actually exists as a valid routine stored in the IndexDB.");
+
+            // Add comment here
+            const isValidAddRoutineParams = queryParams.has("addRoutine", true);
+            const isValidEditRoutineParams = (queryParams.has("editRoutine", true) 
+                && queryParams.has("routineName") 
+                && queryParams.get("routineName"));
+            const isValidEditWorkoutEntryParams = (queryParams.has("editWorkout", true) 
+                && queryParams.has("workoutName") 
+                && queryParams.get("workoutName")
+                && queryParams.has("workoutDateTime") 
+                && queryParams.get("workoutDateTime"));
+    
+            // Add comment here
+            if (isValidAddRoutineParams) {
+                this.isAddRoutineMode = true;
+                this.ctaButtonText = "Add Exercise Routine";
+
+                document.querySelector("#log-workout-page-title").textContent = "Add Exercise Routine";
+            } else if (isValidEditRoutineParams) {
+                this.isEditRoutineMode = true;
+                this.ctaButtonText = "Save Changes";
+
+                // hardcoded for now
+                console.warn("TODO - Need to add additional functionality here to pull a valid routine and add it to the workout store stored in the IndexDB.");
+                this.workoutStore.addExercise({
+                    setup: "existing",
+                    routine: testRoutineExercises
+                });
+
+                document.querySelector("#log-workout-page-title").textContent = "Edit Exercise Routine";
+            } else if (isValidEditWorkoutEntryParams) {
+                this.isEditWorkoutMode = true;
+                this.ctaButtonText = "Save Changes";
+
+                // hardcoded for now
+                console.warn("TODO - Need to add additional functionality here to pull a valid workout entry and add it to the workout store stored in the IndexDB.");
+                this.workoutStore.addExercise({
+                    setup: "existing",
+                    routine: testRoutineExercises
+                });
+
+                document.querySelector("#log-workout-page-title").textContent = "Edit Workout Log";
             }
         },
         mounted() {

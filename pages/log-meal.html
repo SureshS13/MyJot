@@ -37,7 +37,7 @@
             </div>
         </header>
         <section class="d-flex flex-column align-items-center">
-            <h3 class="align-self-xl-start mb-4">Log Meal</h3>
+            <h3 class="align-self-xl-start text-center mb-4" id="log-meal-page-title">Log Meal</h3>
             <span class="loader d-block mx-auto my-0"></span>
             <div class="d-none mb-xl-5" id="app">
                 <section class="mb-5">
@@ -88,7 +88,7 @@
                     </div>
                 </section>
                 <div class="d-flex flex-column d-xl-block text-xl-center mb-xl-4">
-                    <input @click="addMealEntry()" type="button" class="btn btn-dark" id="add-meal-entry" value="Add Meal Entry"/>      
+                    <input @click="addMealEntry()" type="button" class="btn btn-dark" id="add-meal-entry" :value="ctaButtonText"/>      
                 </div>
             </div>
         </section>

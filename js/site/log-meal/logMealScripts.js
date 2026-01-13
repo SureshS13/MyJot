@@ -19,6 +19,10 @@ window.addEventListener("appsetupcompleted", function () {
     const app = createApp({
         data() {
             return {
+                isAddCustomMealMode: false,
+                isEditCustomMealMode: false,
+                isEditMealMode: false,
+                ctaButtonText: "Add Meal Entry",
                 inputtedLogName: null,
                 selectedDateTime: null,
                 inputtedNotes: null,
@@ -79,6 +83,49 @@ window.addEventListener("appsetupcompleted", function () {
                 if (!this.selectedMealType) {
                     throw new Error("A valid meal type is required.");
                 }
+            }
+        },
+        beforeMount() {
+            // Add comment here
+            const queryParams = new URLSearchParams(window.location.search);  
+            
+            console.warn("TODO - Need to add additional validation here to ensure that the workout/routine name actually exists as a valid routine stored in the IndexDB.");
+
+            // Add comment here
+            const isValidAddCustomMealParams = queryParams.has("addCustomMeal", true);
+            const isValidEditCustomMealParams = (queryParams.has("editCustomMeal", true) 
+                && queryParams.has("customMealName") 
+                && queryParams.get("customMealName"));
+            const isValidEditMealEntryParams = (queryParams.has("editMeal", true) 
+                && queryParams.has("mealName") 
+                && queryParams.get("mealName")
+                && queryParams.has("mealDateTime") 
+                && queryParams.get("mealDateTime"));
+    
+            // Add comment here
+            if (isValidAddCustomMealParams) {
+                this.isAddRoutineMode = true;
+                this.ctaButtonText = "Add Custom Meal";
+
+                document.querySelector("#log-meal-page-title").textContent = "Add Custom Meal";
+            } else if (isValidEditCustomMealParams) {
+                this.isEditRoutineMode = true;
+                this.ctaButtonText = "Save Changes";
+
+                // hardcoded for now
+                console.warn("TODO - Need to add additional functionality here to pull a valid routine and add it to the workout store stored in the IndexDB.");
+                this.inputtedLogName = "HI";
+
+                document.querySelector("#log-meal-page-title").textContent = "Edit Custom Meal";
+            } else if (isValidEditMealEntryParams) {
+                this.isEditWorkoutMode = true;
+                this.ctaButtonText = "Save Changes";
+
+                // hardcoded for now
+                console.warn("TODO - Need to add additional functionality here to pull a valid workout entry and add it to the workout store stored in the IndexDB.");
+                this.inputtedLogName = "BYE";
+
+                document.querySelector("#log-meal-page-title").textContent = "Edit Meal Log";
             }
         },
         mounted() {

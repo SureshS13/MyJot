@@ -7,7 +7,7 @@
         padding-bottom: 6rem; /* Accounts for 4rem mobile navbar height plus 2rem extra spacing on the log meal page */
     }
 
-    #log-meal-validation-errors-alert, #app {
+    #log-meal-validation-errors-alert, #log-meal-page-title, #app {
         width: 85%;
     }
 }
