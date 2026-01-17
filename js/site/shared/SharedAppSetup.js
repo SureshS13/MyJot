@@ -29,6 +29,7 @@ const vendorJSImportURLsObj = {
     vueJS: "/js/vendor/vue-js/vue.global.js",
     primeVue: "/js/vendor/primevue/primevue.min.js",
     aura: "/js/vendor/primevue/aura.js",
+    dexieJS: "/js/vendor/dexie-js/dexie.min.js",
     bootstrap: "/js/vendor/bootstrap/bootstrap.bundle.min.js",
     fontAwesome: "/js/vendor/fontawesome/fontawesome.js"
 };
