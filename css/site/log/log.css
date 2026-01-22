@@ -22,7 +22,7 @@
     margin-bottom: 0;
 }
 
-.card {
+#log-errors-alert, .card {
     width: 100%;
 }
 
@@ -35,7 +35,7 @@
         padding: 1rem;
     }
 
-    .log-button, .card {
+    #log-errors-alert, header > h1,  .log-button, .card {
         width: 85%;
     }
 }

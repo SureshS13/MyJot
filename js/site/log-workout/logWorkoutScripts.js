@@ -5,72 +5,68 @@ const loadingSpinner = document.querySelector(".loader");
 const logWorkoutPageHeader = document.querySelector("header");
 const validationAlertComponent = logWorkoutPageHeader.querySelector("#log-workout-validation-errors-alert");
 const vueAppContainer = document.querySelector("#app");
+const queryParams = new URLSearchParams(window.location.search);  
 
 let orderChanged = false;
 let currentDraggedExercise, dropTarget, insertBeforeTarget;
 let dropIndicator;
+
+let myJotDB;
 
 /**********************************************************/
 /* Event listeners, Method Calls, and Other Misc. Actions */
 /**********************************************************/
 
 // Listen for the custom "appsetupcompleted" event to initialize the Log page's Vue app
-window.addEventListener("appsetupcompleted", function () {
+window.addEventListener("appsetupcompleted", async function () {
+    // Declare a new variable that will hold any existing log / routine data if needed
+    let logData;
+
+    try {
+        // Initialize a new Dexie DB instance
+        myJotDB = new Dexie("MyJotDB");
+        
+        // Define the necessary DB schema and tables
+        myJotDB.version(1).stores(window.getMyJotDBSchemaObj());
+
+        // Open the DB connection
+        await myJotDB.open();
+
+        // Pull any existing log / routine data if needed
+        console.error("need to add logic to query the correct db to put items in for orutines when itnegrated");
+        if (queryParams.size) {
+            await myJotDB.transaction("r", myJotDB.exerciseLog, async function () {
+                logData = await myJotDB.exerciseLog.get(parseInt(queryParams.get("workoutId")));
+            });
+        }
+
+        // Adjust header spacing and hide validation alert after successful validation
+        logWorkoutPageHeader.classList.remove("mb-4");
+        logWorkoutPageHeader.classList.add("mb-5");
+        validationAlertComponent.classList.add("d-none");
+    } catch (error) {
+        console.log(error.message);
+
+        // Display the validation error message to the user
+        validationAlertComponent.textContent = `Error while opening a DB connection: "${error.message}". Please try again. If the problem persists, contact support.`;
+
+        // Restore compact header spacing and show the validation alert
+        logWorkoutPageHeader.classList.remove("mb-5");
+        logWorkoutPageHeader.classList.add("mb-4");
+        validationAlertComponent.classList.remove("d-none");
+
+        // Ensure the alert is visible by scrolling it into view
+        validationAlertComponent.scrollIntoView(false);
+
+        // Remove the loading spinner if any errors occur while opening a DB connection
+        loadingSpinner.remove();
+
+        // Exit early from the function if any issues opening the DB
+        return;
+    }
+
     // Import Vue's core API methods from the global Vue object
     const { createApp, reactive } = Vue
-
-    const testRoutineExercises = [
-        {
-            order: 1,
-            name: "Curls",
-            notes: null,
-            category: "Strength Training",
-            sets: [
-                {
-                    id: 1,
-                    order: 1,
-                    type: "Normal",
-                    reps: 3,
-                    weight: 20,
-                    weightUnitType: "kgs",
-                    setNotes: "Test notes one"
-                }
-            ]
-        },
-        {
-            order: 2,
-            name: "Treadmill",
-            notes: null,
-            category: "Cardio",
-            sets: [
-                {
-                    id: 1,
-                    order: 2,
-                    type: "Normal",
-                    minutes: 2,
-                    seconds: 3,
-                    distance: 2.6,
-                    distanceUnitType: "miles",
-                    calories: 300,
-                    setNotes: "Test notes two"
-                }
-            ]
-        },
-        {
-            order: 3,
-            name: "Stretch",
-            notes: "Test notes",
-            category: "Flexibility",
-            sets: [
-                {
-                    id: 1,
-                    order: 3,
-                    type: "Warm-up",
-                    setNotes: "These are test notes"
-                }
-            ]
-        }
-    ];
 
     // Vue reactive store that manages all workout state and exercise/set operations on the page
     const workoutStore = reactive({
@@ -78,10 +74,6 @@ window.addEventListener("appsetupcompleted", function () {
         addExercise: function({ setup = "new", category = "Strength Training", routine }) {
             console.error("this method still needs jsdoc wheni ts finsihe dbeing implented");
             if (setup === "existing") {
-                // this will expect an array of objects, rough implementation for now:
-                // hardcoded for now:
-                routine = testRoutineExercises;
-
                 for (const exercise of routine) {
                     exercise.id = this.addedExercises.length + 1;
                     exercise.order = this.addedExercises.length + 1;
@@ -243,17 +235,39 @@ window.addEventListener("appsetupcompleted", function () {
         * @param {string} [notes] Optional notes for the set.
         */
         updateExerciseSet: function(exerciseId, setId, type, minutes, seconds, distance, distanceUnitType, calories, reps, weight, weightUnitType, notes) {
-            const sets = this.addedExercises[exerciseId - 1].sets;
-            sets[setId - 1].type = type;
-            sets[setId - 1].minutes = minutes;
-            sets[setId - 1].seconds = seconds;
-            sets[setId - 1].distance = distance;
-            sets[setId - 1].distanceUnitType = distanceUnitType;
-            sets[setId - 1].calories = calories;
-            sets[setId - 1].reps = reps;
-            sets[setId - 1].weight = weight;
-            sets[setId - 1].weightUnitType = weightUnitType;
-            sets[setId - 1].notes = notes;
+            const exercise = this.addedExercises[exerciseId - 1], set = exercise.sets[setId - 1];
+
+            set.type = type;
+            set.notes = notes;
+
+            // Delete any category-specific properties from the object that are NOT needed for the current exercise type, then set what is needed
+            switch (exercise.category) {
+                case "Cardio":
+                    delete this.reps;
+                    delete this.weight;
+                    delete this.weightUnitType;
+
+                    set.minutes = minutes;
+                    set.seconds = seconds;
+                    set.distance = distance;
+                    set.distanceUnitType = distanceUnitType;
+                    set.calories = calories;
+
+                    break;
+
+                case "Strength Training":
+                    delete this.minutes;
+                    delete this.seconds;
+                    delete this.distance;
+                    delete this.distanceUnitType;
+                    delete this.calories;
+
+                    set.reps = reps;
+                    set.weight = weight;
+                    set.weightUnitType = weightUnitType;
+
+                    break;
+            }
         },
         /**
         * Deletes a specific set from an exercise. 
@@ -335,7 +349,7 @@ window.addEventListener("appsetupcompleted", function () {
                 setReps: this.set.reps,
                 setWeight: this.set.weight,
                 setWeightUnitType: this.set.weightUnitType,
-                setNotes: this.set.setNotes,
+                setNotes: this.set.notes,
                 setTypes: ["Normal", "Warm-up"],
                 weightUnitTypes: ["lbs", "kgs"],
                 distanceUnitTypes: ["miles", "kilometers"]
@@ -593,15 +607,45 @@ window.addEventListener("appsetupcompleted", function () {
             * Validates all fields, updates UI spacing and hides the validation alert on success. 
             * If validation fails, displays the error message and adjusts the layout accordingly.
             */
-            addWorkoutEntry: function() {
+            addWorkoutEntry: async function() {
                 try {
                     this.validateWorkoutEntry();
+                    
+                    const obj = {};
 
-                    // Adjust header spacing and hide validation alert after successful validation
-                    logWorkoutPageHeader.classList.remove("mb-4");
-                    logWorkoutPageHeader.classList.add("mb-5");
-                    validationAlertComponent.classList.add("d-none");
+                    obj.logName = this.inputtedLogName;
+                    obj.dateTime = this.selectedDateTime;
+                    obj.bodyWeight = this.inputtedBodyWeight;
+                    obj.weightUnitType = this.selectedUnitType;
+                    obj.logNotes = this.inputtedNotes;
+                    
+                    // Build a deep copy of the exercises array and sets subarray for storing in the DB
+                    obj.exercises = this.workoutStore.addedExercises.map(exercise => {
+                        const copiedExercise = { ...exercise };
+                        
+                        copiedExercise.sets = copiedExercise.sets.map(set => {
+                            return { ...set };
+                        });
+                        
+                        return copiedExercise;
+                    });
+
+                    // Add an id property to the object if we are updating an existing log or routine
+                    if (this.isAddRoutineMode || this.isEditRoutineMode || this.isEditWorkoutMode) {
+                        obj.id = logData.id;
+                    }
+
+                    // Add or replace the exercise log object in the DB
+                    console.error("need to add logic to query the correct db to put items in for orutines when itnegrated");
+                    await myJotDB.transaction("rw", myJotDB.exerciseLog, async function () {
+                        await myJotDB.exerciseLog.put(obj);
+                    });
+
+                    // Redirect users to the log page if their data was successfully validated and inserted into the IndexedDB for the session
+                    window.location.replace(`${window.location.origin}/pages/log.html`);
                 } catch (error) {
+                    console.error(error.message);
+
                     // Display the validation error message to the user
                     validationAlertComponent.textContent = error.message;
 
@@ -636,23 +680,18 @@ window.addEventListener("appsetupcompleted", function () {
             }
         },
         beforeMount() {
-            // Add comment here
-            const queryParams = new URLSearchParams(window.location.search);  
-            
             console.warn("TODO - Need to add additional validation here to ensure that the workout/routine name actually exists as a valid routine stored in the IndexDB.");
 
-            // Add comment here
+            // Validate query parameters for add/edit modes
             const isValidAddRoutineParams = queryParams.has("addRoutine", true);
             const isValidEditRoutineParams = (queryParams.has("editRoutine", true) 
-                && queryParams.has("routineName") 
-                && queryParams.get("routineName"));
+                && queryParams.has("routineId") 
+                && queryParams.get("routineId"));
             const isValidEditWorkoutEntryParams = (queryParams.has("editWorkout", true) 
-                && queryParams.has("workoutName") 
-                && queryParams.get("workoutName")
-                && queryParams.has("workoutDateTime") 
-                && queryParams.get("workoutDateTime"));
+                && queryParams.has("workoutId") 
+                && queryParams.get("workoutId"));
     
-            // Add comment here
+            // Set UI mode and populate data based on validated query parameters
             if (isValidAddRoutineParams) {
                 this.isAddRoutineMode = true;
                 this.ctaButtonText = "Add Exercise Routine";
@@ -673,12 +712,16 @@ window.addEventListener("appsetupcompleted", function () {
             } else if (isValidEditWorkoutEntryParams) {
                 this.isEditWorkoutMode = true;
                 this.ctaButtonText = "Save Changes";
-
-                // hardcoded for now
-                console.warn("TODO - Need to add additional functionality here to pull a valid workout entry and add it to the workout store stored in the IndexDB.");
+                
+                this.inputtedLogName = logData.logName;
+                this.selectedDateTime = logData.dateTime;
+                this.inputtedBodyWeight = logData.bodyWeight;
+                this.selectedUnitType = logData.weightUnitType;
+                this.inputtedNotes = logData.logNotes;
+                
                 this.workoutStore.addExercise({
                     setup: "existing",
-                    routine: testRoutineExercises
+                    routine: logData.exercises
                 });
 
                 document.querySelector("#log-workout-page-title").textContent = "Edit Workout Log";

@@ -19,8 +19,9 @@
   </head>
   <body>
     <div class="container" id="log-page-container">
-        <header class="text-center text-xl-start mb-5">
-            <h1>Welcome back Jane Doe!</h1>
+        <header class="d-flex flex-column align-items-center mb-5">
+            <div class="alert alert-danger mb-5 d-none" id="log-errors-alert" role="alert">asdf</div>
+            <h1 class="text-center text-xl-start align-self-xl-start">Welcome back Jane Doe!</h1>
         </header>
         <section class="d-flex flex-column align-items-center flex-xl-row align-items-xl-start" id="log-buttons">
             <a type="button" class="log-button" id="log-meal-button" href="/pages/log-meal.html">
@@ -37,7 +38,7 @@
           <h3 class="mb-4 align-self-xl-start">History</h3>
           <span class="loader"></span>
           <div class="card p-4 d-none" id="app">
-            <p-datatable :value="products" show-gridlines striped-rows>
+            <p-datatable :value="logs" scrollable scrollHeight="5px" show-gridlines striped-rows>
               <p-column field="category" header="Category"></p-column>
               <p-column field="name" header="Name"></p-column>
               <p-column field="datetime" header="Date & Time"></p-column>
@@ -50,9 +51,9 @@
               </p-column>
               <p-column field="deletelog" header="" :class="`text-center`">
                 <template #body="slotProps">
-                  <a class="text-decoration-none text-black" :href="`${slotProps.data.deletelog}`">
+                  <button class="bg-transparent text-decoration-none text-black" :data-log-info="`${slotProps.data.deletelog}`" @click="deleteLog">
                     <i class="fa-solid fa-trash-can"></i>
-                  </a>
+                  </button>
                 </template>
               </p-column>
             </p-datatable>

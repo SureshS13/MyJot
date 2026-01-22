@@ -153,6 +153,18 @@ if (customSharedComponentsMetaTag?.getAttribute("data-custom-shared-components")
     }
 }
 
+// Attach a global utility method to the window object that returns the Dexie.js database schema for MyJotDB, used in any page-specific JS scripts
+console.error("Still need to update this schema object to add the remaining table structures");
+window.getMyJotDBSchemaObj = function() {
+    return {
+            user: '++id, userName',
+            exerciseLog: '++id, logName, dateTime, bodyWeight, weightUnitType, logNotes, *exercises',
+            // mealLog: '',
+            // exerciseRoutines: '',
+            // customMeals: '',
+    }
+};
+
 // Dispatch a custom event after the page has fully loaded to signal app setup completion
 window.addEventListener("load", function () {
     const event = new CustomEvent("appsetupcompleted");
