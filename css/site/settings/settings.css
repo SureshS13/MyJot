@@ -1,17 +1,17 @@
-#setting-button-group {
-    width: 100%;
-}
-
 #setting-content {
     padding: 0 0 0 2rem;
 }
 
-#setting-content > section {
+#setting-content > #general-settings > #username-input {
     margin-bottom: 1.75rem;
 }
 
-#add-new-custom-meal-button, #add-new-exercise-routine-button {
+#settings-validation-errors-alert, #setting-button-group, #add-new-custom-meal-button, #add-new-exercise-routine-button {
     width: 100%;
+}
+
+.hide-section {
+    display: none !important;
 }
 
 @media screen and (max-width: 1200px) {
@@ -27,7 +27,11 @@
         padding: 0rem;
     }    
 
-    #setting-content > section, #confirm-changes-button {
+    #confirm-changes-button {
+        width: 100%;
+    }
+
+    #settings-validation-errors-alert, #setting-content > section {
         width: 85%;
     }
 }

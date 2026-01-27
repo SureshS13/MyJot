@@ -160,7 +160,7 @@ window.getMyJotDBSchemaObj = function() {
             user: '++id, userName',
             exerciseLog: '++id, logName, dateTime, bodyWeight, weightUnitType, logNotes, *exercises',
             // mealLog: '',
-            // exerciseRoutines: '',
+            exerciseRoutines: '++id, logName, bodyWeight, weightUnitType, logNotes, *exercises',
             // customMeals: '',
     }
 };

@@ -7,7 +7,9 @@
 
     <!-- Custom metadata: defines page-specific CSS and JS resources to load via a comma‑separated list. Failures are unhandled to ensure fast failure -->
     <meta data-custom-stylesheets="/css/site/settings/settings.css">
-    <meta data-custom-scripts="/js/site/settings/settingScripts.js">
+
+    <!-- Optional custom metadata: defines any page-specific JS script modules to include via a comma‑separated list. Failures are unhandled to ensure fast failure -->
+    <meta data-custom-script-modules="/js/site/settings/settingScripts.js">
 
     <!-- Optional custom metadata: defines any page-specific components to include via a comma‑separated list. Failures are unhandled to ensure fast failure -->
     <meta data-custom-shared-components="navbar">
@@ -19,8 +21,11 @@
   </head>
   <body>
     <div class="container" id="settings-page-container">
-        <header class="text-center text-xl-start mb-5">
-            <h1>Settings</h1>
+        <header class="d-flex flex-column align-items-center mb-5">
+            <div class="alert alert-danger mb-5 d-none" id="settings-validation-errors-alert" role="alert">
+
+            </div>
+            <h1 class="align-self-xl-start">Settings</h1>
         </header>
         <section class="row">
             <div class="col-12 col-xl-3 d-flex flex-column align-items-center d-xl-block mb-4 mb-xl-0">
@@ -32,11 +37,12 @@
             </div>
             <div class="col-12 col-xl-9">
                 <div class="d-flex flex-column align-items-center d-xl-block" id="setting-content">
-                    <section id="general-settings">
+                    <section class="d-flex flex-column d-xl-block" id="general-settings">
                         <label for="username-input" class="form-label">Username</label>
                         <input type="text" class="form-control" id="username-input" placeholder="Enter a username">
+                        <button type="button" class="btn btn-dark align-self-center" id="confirm-changes-button">Confirm changes</button>
                     </section>
-                    <section class="d-none" id="custom-meals">
+                    <section class="hide-section" id="custom-meals">
                         <div class="input-group mb-4" id="custom-meals-searchbar">
                             <span class="input-group-text" id="search-icon">
                                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -101,7 +107,7 @@
                             <button type="button" class="btn btn-outline-dark" id="add-new-custom-meal-button">Add New Custom Meal</button>
                         </a>
                     </section>
-                    <section class="d-none" id="exercise-routines">
+                    <section class="hide-section" id="exercise-routines">
                         <div class="input-group mb-4" id="exercise-routines-searchbar">
                             <span class="input-group-text" id="search-icon">
                                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -117,26 +123,10 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <tr>
-                                <td>My Wed Strength Day</td>
-                                <td>
-                                    <a class="text-decoration-none text-black" href="#">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                      </a>
-                                </td>
-                                <td>
-                                    <a class="text-decoration-none text-black" href="#">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </a>
-                                </td>
-                              </tr>
                             </tbody>
                         </table>
-                        <a href="">
-                            <button type="button" class="btn btn-outline-dark" id="add-new-exercise-routine-button">Add New Exercise Routine</button>
-                        </a>
+                        <button type="button" class="btn btn-outline-dark" id="add-new-exercise-routine-button">Add New Exercise Routine</button>
                     </section>
-                    <button type="button" class="btn btn-dark" id="confirm-changes-button">Confirm changes</button>
                 </div>
             </div>
         </div>

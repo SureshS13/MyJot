@@ -45,7 +45,7 @@ saveFileUploadInput.addEventListener("change", async function () {
         await myJotDB.open();
        
         // Start a read-write transaction to safely add all log data to the DB
-        await myJotDB.transaction('rw', myJotDB.user, myJotDB.exerciseLog, async function () {
+        await myJotDB.transaction('rw', myJotDB.user, myJotDB.exerciseLog, myJotDB.exerciseRoutines, async function () {
             // Add the user's profile information to the 'user' table
             await myJotDB.user.add({
                 userName: logObj.userName
@@ -54,6 +54,11 @@ saveFileUploadInput.addEventListener("change", async function () {
             // Iterate through each exercise log and add it to the 'exerciseLog' table
             for (const obj of logObj.exerciseLogs) {
                 await myJotDB.exerciseLog.add(obj);
+            }
+
+            // Iterate through each exercise routine and add it to the 'exerciseRoutines' table
+            for (const obj of logObj.exerciseRoutines) {
+                await myJotDB.exerciseRoutines.add(obj);
             }
         });
         

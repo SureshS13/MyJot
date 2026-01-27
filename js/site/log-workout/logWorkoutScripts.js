@@ -3,6 +3,7 @@
 /*******************************************************/
 const loadingSpinner = document.querySelector(".loader");
 const logWorkoutPageHeader = document.querySelector("header");
+const backButton = logWorkoutPageHeader.querySelector("a");
 const validationAlertComponent = logWorkoutPageHeader.querySelector("#log-workout-validation-errors-alert");
 const vueAppContainer = document.querySelector("#app");
 const queryParams = new URLSearchParams(window.location.search);  
@@ -19,6 +20,25 @@ let myJotDB;
 
 // Listen for the custom "appsetupcompleted" event to initialize the Log page's Vue app
 window.addEventListener("appsetupcompleted", async function () {
+    // Validate query parameters for pulling the necessary data and configuring add/edit modes in the Vue app below
+    const isValidAddRoutineParams = queryParams.has("addRoutine", true);
+    const isValidEditRoutineParams = (queryParams.has("editRoutine", true) 
+        && queryParams.has("routineId") 
+        && queryParams.get("routineId"));
+    const isValidEditWorkoutEntryParams = (queryParams.has("editWorkout", true) 
+        && queryParams.has("workoutId") 
+        && queryParams.get("workoutId"));
+
+    // If the user has navigated here from the settings page, adjust the URL for the back button to take them back there as well
+    if (isValidAddRoutineParams || isValidEditRoutineParams) {
+        // Keeping a backup of the icon element, since replacing textContent will delete it
+        const backArrowIcon = backButton.querySelector(".fa-solid");
+
+        backButton.href = "/pages/settings.html";
+        backButton.textContent = "Return to Settings Page";
+        backButton.prepend(backArrowIcon);
+    }
+
     // Declare a new variable that will hold any existing log / routine data if needed
     let logData;
 
@@ -33,13 +53,18 @@ window.addEventListener("appsetupcompleted", async function () {
         await myJotDB.open();
 
         // Pull any existing log / routine data if needed
-        console.error("need to add logic to query the correct db to put items in for orutines when itnegrated");
         if (queryParams.size) {
-            await myJotDB.transaction("r", myJotDB.exerciseLog, async function () {
-                logData = await myJotDB.exerciseLog.get(parseInt(queryParams.get("workoutId")));
-            });
+            if (isValidEditWorkoutEntryParams) {
+                await myJotDB.transaction("r", myJotDB.exerciseLog, async function () {
+                    logData = await myJotDB.exerciseLog.get(parseInt(queryParams.get("workoutId")));
+                });
+            } else if (isValidEditRoutineParams) {
+                await myJotDB.transaction("r", myJotDB.exerciseRoutines, async function () {
+                    logData = await myJotDB.exerciseRoutines.get(parseInt(queryParams.get("routineId")));
+                });
+            } 
         }
-
+        console.log(logData);
         // Adjust header spacing and hide validation alert after successful validation
         logWorkoutPageHeader.classList.remove("mb-4");
         logWorkoutPageHeader.classList.add("mb-5");
@@ -631,18 +656,23 @@ window.addEventListener("appsetupcompleted", async function () {
                     });
 
                     // Add an id property to the object if we are updating an existing log or routine
-                    if (this.isAddRoutineMode || this.isEditRoutineMode || this.isEditWorkoutMode) {
+                    if (this.isEditRoutineMode || this.isEditWorkoutMode) {
                         obj.id = logData.id;
                     }
 
                     // Add or replace the exercise log object in the DB
-                    console.error("need to add logic to query the correct db to put items in for orutines when itnegrated");
-                    await myJotDB.transaction("rw", myJotDB.exerciseLog, async function () {
-                        await myJotDB.exerciseLog.put(obj);
-                    });
+                    if (this.isAddRoutineMode || this.isEditRoutineMode) {
+                        await myJotDB.transaction("rw", myJotDB.exerciseRoutines, async function () {
+                            await myJotDB.exerciseRoutines.put(obj);
+                        });
+                    } else  {
+                        await myJotDB.transaction("rw", myJotDB.exerciseLog, async function () {
+                            await myJotDB.exerciseLog.put(obj);
+                        });
+                    } 
 
-                    // Redirect users to the log page if their data was successfully validated and inserted into the IndexedDB for the session
-                    window.location.replace(`${window.location.origin}/pages/log.html`);
+                    // Redirect users to either the log or settings page if their data was successfully validated and inserted into the IndexedDB for the session
+                    window.location.replace(`${window.location.origin}/pages/${(this.isAddRoutineMode || this.isEditRoutineMode) ? 'settings.html' : 'log.html'}`);
                 } catch (error) {
                     console.error(error.message);
 
@@ -668,7 +698,7 @@ window.addEventListener("appsetupcompleted", async function () {
                     throw new Error("A valid log name is required.");
                 }
 
-                if (!this.selectedDateTime) {
+                if (!this.selectedDateTime && !this.isAddRoutineMode && !this.isEditRoutineMode) {
                     throw new Error("A valid date & time is required.");
                 }
 
@@ -679,18 +709,7 @@ window.addEventListener("appsetupcompleted", async function () {
                 this.workoutStore.validateAllExercises();
             }
         },
-        beforeMount() {
-            console.warn("TODO - Need to add additional validation here to ensure that the workout/routine name actually exists as a valid routine stored in the IndexDB.");
-
-            // Validate query parameters for add/edit modes
-            const isValidAddRoutineParams = queryParams.has("addRoutine", true);
-            const isValidEditRoutineParams = (queryParams.has("editRoutine", true) 
-                && queryParams.has("routineId") 
-                && queryParams.get("routineId"));
-            const isValidEditWorkoutEntryParams = (queryParams.has("editWorkout", true) 
-                && queryParams.has("workoutId") 
-                && queryParams.get("workoutId"));
-    
+        beforeMount() {    
             // Set UI mode and populate data based on validated query parameters
             if (isValidAddRoutineParams) {
                 this.isAddRoutineMode = true;
@@ -701,11 +720,14 @@ window.addEventListener("appsetupcompleted", async function () {
                 this.isEditRoutineMode = true;
                 this.ctaButtonText = "Save Changes";
 
-                // hardcoded for now
-                console.warn("TODO - Need to add additional functionality here to pull a valid routine and add it to the workout store stored in the IndexDB.");
+                this.inputtedLogName = logData.logName;
+                this.inputtedBodyWeight = logData.bodyWeight;
+                this.selectedUnitType = logData.weightUnitType;
+                this.inputtedNotes = logData.logNotes;
+
                 this.workoutStore.addExercise({
                     setup: "existing",
-                    routine: testRoutineExercises
+                    routine: logData.exercises
                 });
 
                 document.querySelector("#log-workout-page-title").textContent = "Edit Exercise Routine";

@@ -27,8 +27,8 @@ window.addEventListener("appsetupcompleted", async function () {
         // Open the DB connection
         await myJotDB.open();
        
-        // Retrieve the log data from the DB to display in the datatable
-        await myJotDB.transaction("r", myJotDB.exerciseLog, async function () {
+        // Retrieve the log data from the DB to display in the datatable, and pull the username (if set) and render it in the UI
+        await myJotDB.transaction("r", myJotDB.exerciseLog, myJotDB.user, async function () {
             const exerciseLogsArray = await myJotDB.exerciseLog.toArray();
 
             exerciseLogs = exerciseLogsArray.map(exerciseLog => {
@@ -40,6 +40,10 @@ window.addEventListener("appsetupcompleted", async function () {
                     deletelog: `exercise,${exerciseLog.id}`
                 };
             });
+
+            const userObj = await myJotDB.user.get(1);
+
+            document.querySelector("#user-welcome-message").textContent = (userObj?.userName) ? `Welcome back ${userObj.userName}!` : "Welcome back Jane Doe!";
 
             console.error("still need to pull meal logs");
         });
@@ -145,7 +149,7 @@ saveDataButton.addEventListener("click", async function() {
         const logObj = {};
 
         // Start a read transaction to pull all table data from the DB for saving locally
-        await myJotDB.transaction('r', myJotDB.user, myJotDB.exerciseLog, async function () {
+        await myJotDB.transaction('r', myJotDB.user, myJotDB.exerciseLog, myJotDB.exerciseRoutines, async function () {
             // Add the user's profile information to the log object
             const user = await myJotDB.user.get({id: 1});
             logObj.userName = user.userName;
@@ -153,6 +157,10 @@ saveDataButton.addEventListener("click", async function() {
             // Add the contents of the exerciseLog table to the log object
             const exerciseLogs = await myJotDB.exerciseLog.toArray();
             logObj.exerciseLogs = exerciseLogs;
+
+            // Add the contents of the exerciseRoutines table to the log object
+            const exerciseRoutines = await myJotDB.exerciseRoutines.toArray();
+            logObj.exerciseRoutines = exerciseRoutines;
         });      
 
         // Convert the log object into a JSON string for storage
