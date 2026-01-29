@@ -96,7 +96,7 @@
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input v-model="selectedExerciseSetup" class="form-check-input" type="radio" name="exercise-setup" id="loadExistingExercises" value="existing">
+                                <input v-model="selectedExerciseSetup" class="form-check-input" type="radio" name="exercise-setup" id="loadExistingExercises" value="newfromexisting">
                                 <label class="form-check-label" for="loadExistingExercises">
                                     Load exercises from existing routine
                                 </label>
@@ -106,13 +106,13 @@
                             <label for="new-exercise-type">Category</label>
                             <p-select v-model="selectedNewExerciseType" :options="exerciseTypes" id="new-exercise-type" name="new-exercise-type" checkmark :highlightOnSelect="false" />
                         </div>
-                        <div class="d-flex flex-column gap-2 mb-4" :class='selectedExerciseSetup === "existing" ? "d-flex" : "d-none"'>
+                        <div class="d-flex flex-column gap-2 mb-4" :class='selectedExerciseSetup === "newfromexisting" ? "d-flex" : "d-none"'>
                             <label for="existing-exercise-routine">Routine</label>
-                            <p-select v-model="selectedExerciseRoutine" :options="existingExerciseRoutineNames" id="existing-exercise-routine" name="existing-exercise-routine" checkmark :highlightOnSelect="false" />
+                            <p-select v-model="selectedExerciseRoutine" :options="existingExerciseRoutineNames" option-label="logName" option-value="id" id="existing-exercise-routine" name="existing-exercise-routine" checkmark :highlightOnSelect="false" />
                         </div>
                         <br>
                         <div class="text-center mb-3">
-                            <input @click="addExercise()" type="button" class="btn btn-dark" id="add-meal-entry" :value='selectedExerciseSetup === "new" ? "Add Exercise" : "Add Exercises"'/>      
+                            <input @click="addExercise()" type="button" class="btn btn-dark" :class="(selectedExerciseSetup === 'newfromexisting' && !selectedExerciseRoutine) ? 'd-none' : ''" :value='selectedExerciseSetup === "new" ? "Add Exercise" : "Add Exercises"'/>      
                         </div>
                     </p-dialog>
                 </section>

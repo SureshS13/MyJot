@@ -39,6 +39,9 @@ window.addEventListener("appsetupcompleted", async function () {
         backButton.prepend(backArrowIcon);
     }
 
+    // Declare a new variable that will hold the names of any existing routines for use in the Vue app
+    let existingRoutineData;
+
     // Declare a new variable that will hold any existing log / routine data if needed
     let logData;
 
@@ -64,7 +67,17 @@ window.addEventListener("appsetupcompleted", async function () {
                 });
             } 
         }
-        console.log(logData);
+
+        // Pull all existing routine names if any are added
+        await myJotDB.transaction("r", myJotDB.exerciseRoutines, async function () {
+            existingRoutineData = (await myJotDB.exerciseRoutines.toArray()).map(routine => {
+                return {
+                    id: routine.id,
+                    logName: routine.logName
+                }
+            });
+        });
+        
         // Adjust header spacing and hide validation alert after successful validation
         logWorkoutPageHeader.classList.remove("mb-4");
         logWorkoutPageHeader.classList.add("mb-5");
@@ -96,15 +109,37 @@ window.addEventListener("appsetupcompleted", async function () {
     // Vue reactive store that manages all workout state and exercise/set operations on the page
     const workoutStore = reactive({
         addedExercises: [],
-        addExercise: function({ setup = "new", category = "Strength Training", routine }) {
-            console.error("this method still needs jsdoc wheni ts finsihe dbeing implented");
+        /**
+        * Adds a new exercise or existing routine to the list of added exercises
+        * @param {string} setup The setup configuration to use. Valid values are 'new', 'newfromexisting', 'existing'
+        * @param {string} category The category configuration to use when adding the new exercise
+        * @param {number} routineId An id for the existing routine to add in the new log
+        * @param {Array<object>} routineArray An array of exercise objects to add to the list of added exercises
+        * @async
+        */
+        addExercise: async function({ setup = "new", category = "Strength Training", routineId, routineArray }) {
             if (setup === "existing") {
-                for (const exercise of routine) {
+                for (const exercise of routineArray) {
                     exercise.id = this.addedExercises.length + 1;
                     exercise.order = this.addedExercises.length + 1;
 
                     this.addedExercises.push(exercise);
                 }
+            } else if (setup === "newfromexisting") {
+                await myJotDB.transaction("r", myJotDB.exerciseRoutines, async () => {
+                    const routine = await myJotDB.exerciseRoutines.get(parseInt(routineId));
+                    
+                    for (const exercise of routine.exercises) {
+                        this.addedExercises.push({
+                            id: this.addedExercises.length + 1,
+                            order: this.addedExercises.length + 1,
+                            name: exercise.name,
+                            notes: exercise.notes,
+                            category: exercise.category,
+                            sets: [...exercise.sets]
+                        });
+                    }
+                });
             } else {
                 this.addedExercises.push({
                     id: this.addedExercises.length + 1,
@@ -607,7 +642,7 @@ window.addEventListener("appsetupcompleted", async function () {
                 selectedNewExerciseType: "Strength Training",
                 exerciseTypes: ["Cardio", "Strength Training", "Flexibility"],
                 selectedExerciseRoutine: null,
-                existingExerciseRoutineNames: ["My Wed Strength Day", "Sat Cardio"],
+                existingExerciseRoutineNames: existingRoutineData,
                 selectedExerciseType: null,
                 selectedSetType: "Normal",
                 setTypes: ["Normal", "Warm-up"]
@@ -615,15 +650,21 @@ window.addEventListener("appsetupcompleted", async function () {
         }, 
         methods: {
             /**
-            * Adds a new exercise to the workout using the selected setup, category, and routine. 
+            * Adds a new exercise to the workout using the selected setup, category, and routineId. 
             * Closes the "Add Exercise" modal after the exercise is created.
             */
             addExercise: function() {
-                workoutStore.addExercise({
-                    setup: this.selectedExerciseSetup, 
-                    category: this.selectedNewExerciseType, 
-                    routine: this.selectedExerciseRoutine
-                });
+                const exerciseObj = {
+                    setup: this.selectedExerciseSetup
+                };
+           
+                if (this.selectedExerciseRoutine) {            
+                    exerciseObj.routineId = this.selectedExerciseRoutine
+                } else {
+                    exerciseObj.category = this.selectedNewExerciseType
+                }
+
+                workoutStore.addExercise(exerciseObj);
 
                 this.showAddExerciseModal = false
             },
@@ -727,7 +768,7 @@ window.addEventListener("appsetupcompleted", async function () {
 
                 this.workoutStore.addExercise({
                     setup: "existing",
-                    routine: logData.exercises
+                    routineArray: logData.exercises
                 });
 
                 document.querySelector("#log-workout-page-title").textContent = "Edit Exercise Routine";
@@ -743,7 +784,7 @@ window.addEventListener("appsetupcompleted", async function () {
                 
                 this.workoutStore.addExercise({
                     setup: "existing",
-                    routine: logData.exercises
+                    routineArray: logData.exercises
                 });
 
                 document.querySelector("#log-workout-page-title").textContent = "Edit Workout Log";
