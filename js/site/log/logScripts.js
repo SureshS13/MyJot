@@ -15,7 +15,7 @@ let myJotDB;
 // Listen for the custom "appsetupcompleted" event to initialize the Log page's Vue app
 window.addEventListener("appsetupcompleted", async function () {
     // Declare variables to hold our log data (used in the Vue app)
-    let exerciseLogs, mealLogs;
+    let exerciseLogs, mealLogs, combinedLogs;
 
     try {
         // Initialize a new Dexie DB instance
@@ -28,8 +28,9 @@ window.addEventListener("appsetupcompleted", async function () {
         await myJotDB.open();
        
         // Retrieve the log data from the DB to display in the datatable, and pull the username (if set) and render it in the UI
-        await myJotDB.transaction("r", myJotDB.exerciseLog, myJotDB.user, async function () {
+        await myJotDB.transaction("r", myJotDB.exerciseLog, myJotDB.mealLog, myJotDB.user, async function () {
             const exerciseLogsArray = await myJotDB.exerciseLog.toArray();
+            const mealLogsArray = await myJotDB.mealLog.toArray();
 
             exerciseLogs = exerciseLogsArray.map(exerciseLog => {
                 return {
@@ -41,11 +42,32 @@ window.addEventListener("appsetupcompleted", async function () {
                 };
             });
 
+            mealLogs = mealLogsArray.map(mealLog => {
+                return {
+                    category: "Meal",
+                    name: mealLog.logName,
+                    datetime: new Date(mealLog.dateTime).toUTCString(),
+                    editlog: `${window.location.origin}/pages/log-meal.html?editMeal=true&mealId=${mealLog.id}`,
+                    deletelog: `meal,${mealLog.id}`
+                };
+            });
+
+            // Build a new array and sort it so the most recent entries appear first, which will be used to populate the History datatable
+            combinedLogs = [...exerciseLogs, ...mealLogs].sort(function (a, b) {
+                const aDateObj = Date.parse(a.datetime), bDateObj = Date.parse(b.datetime);
+
+                if (aDateObj < bDateObj) {
+                    return 1;
+                } else if (aDateObj > bDateObj) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+     
             const userObj = await myJotDB.user.get(1);
 
             document.querySelector("#user-welcome-message").textContent = (userObj?.userName) ? `Welcome back ${userObj.userName}!` : "Welcome back Jane Doe!";
-
-            console.error("still need to pull meal logs");
         });
     } catch (error) {
         console.log(error.message);
@@ -68,7 +90,7 @@ window.addEventListener("appsetupcompleted", async function () {
     const app = createApp({
         data() {
             return {
-                logs: exerciseLogs
+                logs: combinedLogs
             }
         },
         methods: {
@@ -82,17 +104,18 @@ window.addEventListener("appsetupcompleted", async function () {
                     // Extract the log table name and ID from the button's data attribute
                     const logInfo = event.currentTarget.getAttribute("data-log-info").split(",");
                     const logTable = (logInfo[0] === "exercise") ?  myJotDB.exerciseLog : myJotDB.mealLog;
-                    const logId = parseInt(logInfo[1]);
+                    const logId = parseInt(logInfo[1]);   
                     
                     let updatedLogs;
                     
                     // Start a read-write transaction to delete the log and fetch the updated list
-                    await myJotDB.transaction('rw', logTable, async function () {
-                        await myJotDB.exerciseLog.delete(logId);
+                    await myJotDB.transaction('rw', myJotDB.exerciseLog, myJotDB.mealLog, async function () {
+                        await logTable.delete(logId);
 
                         const exerciseLogsArray = await myJotDB.exerciseLog.toArray();
+                        const mealLogsArray = await myJotDB.mealLog.toArray();
 
-                        updatedLogs = exerciseLogsArray.map(exerciseLog => {
+                        exerciseLogs = exerciseLogsArray.map(exerciseLog => {
                             return {
                                 category: "Exercise",
                                 name: exerciseLog.logName,
@@ -101,8 +124,30 @@ window.addEventListener("appsetupcompleted", async function () {
                                 deletelog: `exercise,${exerciseLog.id}`
                             };
                         });
-                        
-                        console.error("still need to add logic to delete meal logs");
+
+                        mealLogs = mealLogsArray.map(mealLog => {
+                            console.error("still need to add the link to edit a log");
+                            return {
+                                category: "Meal",
+                                name: mealLog.logName,
+                                datetime: new Date(mealLog.dateTime).toUTCString(),
+                                editlog: ``,
+                                deletelog: `meal,${mealLog.id}`
+                            };
+                        });
+
+                        // Build an updated array and sort it so the most recent entries appear first, used to repopulate the History datatable
+                        updatedLogs = [...exerciseLogs, ...mealLogs].sort(function (a, b) {
+                            const aDateObj = Date.parse(a.datetime), bDateObj = Date.parse(b.datetime);
+
+                            if (aDateObj < bDateObj) {
+                                return 1;
+                            } else if (aDateObj > bDateObj) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        });
                     });
 
                     // Update the reactive data to match the updated state
@@ -115,7 +160,7 @@ window.addEventListener("appsetupcompleted", async function () {
 
                     // Show the error message to the user
                     validationAlertComponent.classList.remove("d-none");
-                    validationAlertComponent.textContent = `Error while deletinglog: "${error.message}". Please try again. If the problem persists, contact support.`;
+                    validationAlertComponent.textContent = `Error while deleting log: "${error.message}". Please try again. If the problem persists, contact support.`;
                 }
             }
         }
@@ -149,7 +194,7 @@ saveDataButton.addEventListener("click", async function() {
         const logObj = {};
 
         // Start a read transaction to pull all table data from the DB for saving locally
-        await myJotDB.transaction('r', myJotDB.user, myJotDB.exerciseLog, myJotDB.exerciseRoutines, async function () {
+        await myJotDB.transaction('r', myJotDB.user, myJotDB.exerciseLog, myJotDB.mealLog, myJotDB.exerciseRoutines, myJotDB.customMeals, async function () {
             // Add the user's profile information to the log object
             const user = await myJotDB.user.get({id: 1});
             logObj.userName = user.userName;
@@ -158,9 +203,17 @@ saveDataButton.addEventListener("click", async function() {
             const exerciseLogs = await myJotDB.exerciseLog.toArray();
             logObj.exerciseLogs = exerciseLogs;
 
+            // Add the contents of the mealLog table to the log object
+            const mealLogs = await myJotDB.mealLog.toArray();
+            logObj.mealLogs = mealLogs;
+
             // Add the contents of the exerciseRoutines table to the log object
             const exerciseRoutines = await myJotDB.exerciseRoutines.toArray();
             logObj.exerciseRoutines = exerciseRoutines;
+
+            // Add the contents of the customMeals table to the log object
+            const customMeals = await myJotDB.customMeals.toArray();
+            logObj.customMeals = customMeals;
         });      
 
         // Convert the log object into a JSON string for storage

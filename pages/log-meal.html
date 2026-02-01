@@ -50,7 +50,7 @@
                         </label>
                         <input v-model="inputtedLogName" type="text" class="form-control" id="log-name" name="log-name">
                     </div>
-                    <div class="d-flex flex-column gap-2 mb-4">
+                    <div class="d-flex flex-column gap-2 mb-4" :class="(isAddCustomMealMode || isEditCustomMealMode) ? 'd-none' : ''">
                         <label for="date-time">Date & Time</label>
                         <input v-model="selectedDateTime" type="datetime-local" class="form-control" id="date-time" name="date-time"/>
                     </div>
@@ -61,7 +61,22 @@
                 </section>
                 <br />
                 <section class="mb-5">
-                    <h3 class="text-center text-xl-start mb-4">Meal Details</h3>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>Meal Details</h3>
+                        <button v-on:click="showLoadFromCustomMealModal = true" type="button" class="btn p-0 mb-1">
+                            <i class="fa-solid fa-ellipsis fa-2x"></i>
+                        </button>
+
+                        <!-- Load From Custom Meal Modal Markup -->
+                        <p-dialog v-model:visible="showLoadFromCustomMealModal" modal header="Load From Existing Meal" :style="{ width: '50vw' }" :breakpoints="{ '575px': '90vw' }">
+                            <div class="d-flex flex-column mb-4">
+                                <p-select v-model="selectedCustomMeal" :options="existingCustomMealNames" option-label="logName" option-value="id" id="existing-custom-meal" name="existing-custom-meal" checkmark :highlightOnSelect="false" />
+                            </div>
+                            <div class="text-center mb-3">
+                                <input @click="loadMealDetails()" type="button" class="btn btn-dark" :class="!selectedCustomMeal ? 'd-none' : ''" :value="'Load Meal Details'"/>      
+                            </div>
+                        </p-dialog>
+                    </div>
                     <div class="d-flex flex-column gap-2 mb-4">
                         <label for="meal-name">Name</label>
                         <input v-model="inputtedMealName" type="text" class="form-control" id="meal-name" name="meal-name">

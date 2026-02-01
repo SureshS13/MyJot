@@ -14,6 +14,8 @@ const generalSettingsSection = document.querySelector("#general-settings");
 const userNameInput = document.querySelector("#username-input");
 const confirmChangesButton = document.querySelector("#confirm-changes-button");
 const customMealsSection = document.querySelector("#custom-meals");
+const customMealsSearchbox = customMealsSection.querySelector("#custom-meals-searchbar > input");
+const addCustomMealButton = document.querySelector("#add-new-custom-meal-button");
 const exerciseRoutinesSection = document.querySelector("#exercise-routines");
 const exerciseRoutinesSearchbox = document.querySelector("#exercise-routines-searchbar > input");
 const addNewExerciseRoutineButton = document.querySelector("#add-new-exercise-routine-button");
@@ -25,6 +27,97 @@ let generalSettingsData, customMealsData, exerciseRoutinesData;
 /*********************/
 /* Utility Functions */
 /*********************/
+
+/***
+* Constructs a table row for each stored custom meal, and configures it with the necessary event listeners for the page.
+* @param {Object} customMeal The saved custom meal object retrieved from the DB
+*/
+function buildCustomMealTableRow(customMeal) {
+    const penIcon = createHTMLElement({
+        type: "i",
+        classes: ["fa-solid", "fa-pen-to-square"]
+    });
+
+    const trashIcon = createHTMLElement({
+        type: "i",
+        classes: ["fa-solid", "fa-trash-can"],
+        attributes: [
+            {
+                name: "data-custom-meal-id",
+                value: customMeal.id
+            }
+        ]
+    });
+
+    // Add the event listener needed to delete routines
+    trashIcon.addEventListener("click", async function (event) {
+        try {
+            await myJotDB.transaction("rw", myJotDB.customMeals, async function () {
+                await myJotDB.customMeals.delete(parseInt(event.currentTarget.getAttribute("data-custom-meal-id")));
+            });
+
+            // Refresh the page if the deletion was successful
+            window.location.reload();
+        } catch (error) {
+            console.error(error.message);
+
+            // Show the error message to the user
+            validationAlertComponent.classList.remove("d-none");
+            validationAlertComponent.textContent = `Error while deleting the custom meal: "${error.message}". Please reupload your save file and try again. If the problem persists, contact support.`;
+        }
+    });
+
+    const editTag = createHTMLElement({
+        type: "a",
+        classes: ["text-decoration-none", "text-black"],
+        attributes: [
+            {
+                name: "href",
+                value: `${window.location.origin}/pages/log-meal.html?editCustomMeal=true&customMealId=${customMeal.id}`
+            }
+        ],
+        children: [penIcon]
+    });
+
+    const deleteTag = createHTMLElement({
+        type: "a",
+        classes: ["text-decoration-none", "text-black"],
+        attributes: [
+            {
+                name: "href",
+                value: "#"
+            }
+        ],
+        children: [trashIcon]
+    });
+
+    const customMealNameTd = createHTMLElement({
+        type: "td",
+        text: customMeal.logName
+    });
+
+    const customMealTypeTd = createHTMLElement({
+        type: "td",
+        text: customMeal.mealType
+    });
+
+    const editCustomMealTd = createHTMLElement({
+        type: "td",
+        children: [editTag]
+    });
+
+    const deleteCustomMealTd = createHTMLElement({
+        type: "td",
+        children: [deleteTag]
+    });
+
+    const customMealTableRow = createHTMLElement({ 
+        type: "tr",
+        children: [customMealNameTd, customMealTypeTd, editCustomMealTd, deleteCustomMealTd]
+    });
+
+    return customMealTableRow;
+}
 
 /***
 * Constructs a table row for each stored routine, and configures it with the necessary event listeners for the page.
@@ -99,14 +192,14 @@ function buildRoutineTableRow(routine) {
         children: [editTag]
     });
 
-    const deleteRoutineId = createHTMLElement({
+    const deleteRoutineTd = createHTMLElement({
         type: "td",
         children: [deleteTag]
     });
 
     const routineTableRow = createHTMLElement({ 
         type: "tr",
-        children: [routineNameTd, editRoutineTd, deleteRoutineId]
+        children: [routineNameTd, editRoutineTd, deleteRoutineTd]
     });
 
     return routineTableRow;
@@ -140,10 +233,10 @@ window.addEventListener("appsetupcompleted", async function () {
         await myJotDB.open();
 
         // Pull the settings data from the DB
-        await myJotDB.transaction("r", myJotDB.user, myJotDB.exerciseRoutines, async function () {
+        await myJotDB.transaction("r", myJotDB.user, myJotDB.customMeals, myJotDB.exerciseRoutines, async function () {
             generalSettingsData = await myJotDB.user.get(1);
             exerciseRoutinesData = await myJotDB.exerciseRoutines.toArray();
-            console.error("need topull meals here as wel");
+            customMealsData = await myJotDB.customMeals.toArray();
         });
 
         // Set the initial value of the input text field with the user's set username
@@ -179,12 +272,35 @@ window.addEventListener("appsetupcompleted", async function () {
                 validationAlertComponent.textContent = `Error while updating username "${error.message}". Please refresh the page file and try again. If the problem persists, contact support.`;
             }
         });
+
+        // Construct a table row for each stored custom meal, and configure it with the necessary event listeners
+        customMealsData.forEach(customMeal => {         
+            customMealsSection.querySelector("tbody").appendChild(buildCustomMealTableRow(customMeal));
+        });
         
         // Construct a table row for each stored routine, and configure it with the necessary event listeners
         exerciseRoutinesData.forEach(routine => {         
             exerciseRoutinesSection.querySelector("tbody").appendChild(buildRoutineTableRow(routine));
         });
 
+        // Attach event listener to handle custom meal filtering
+        customMealsSearchbox.addEventListener("input", function () {
+            const customMealTableRows = document.querySelectorAll("#custom-meals > table tbody > tr");
+
+            if (customMealsSearchbox.value) {
+                customMealTableRows.forEach(tableRow => {
+                    const isSearchQueryIncluded = tableRow.querySelector("td:first-child").textContent.toLowerCase().includes(customMealsSearchbox.value.toLowerCase());
+
+                    if (!isSearchQueryIncluded) {
+                        tableRow.classList.add("d-none");
+                    } else {
+                        tableRow.classList.remove("d-none");
+                    }
+                });
+            } else {
+                customMealTableRows.forEach(tableRow => tableRow.classList.remove("d-none"));
+            }
+        });
 
         // Attach event listener to handle exercise routine filtering
         exerciseRoutinesSearchbox.addEventListener("input", function () {
@@ -232,6 +348,10 @@ window.addEventListener("appsetupcompleted", async function () {
         validationAlertComponent.classList.remove("d-none");
         validationAlertComponent.textContent = `Error retrieving settings data from DB: "${error.message}". Please refresh the page and try again. If the problem persists, contact support.`;
     }
+});
+
+addCustomMealButton.addEventListener("click", function () {
+    window.location.replace(`${window.location.origin}/pages/log-meal.html?addCustomMeal=true`);
 });
 
 addNewExerciseRoutineButton.addEventListener("click", function () {
