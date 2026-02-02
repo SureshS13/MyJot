@@ -195,25 +195,33 @@ saveDataButton.addEventListener("click", async function() {
 
         // Start a read transaction to pull all table data from the DB for saving locally
         await myJotDB.transaction('r', myJotDB.user, myJotDB.exerciseLog, myJotDB.mealLog, myJotDB.exerciseRoutines, myJotDB.customMeals, async function () {
-            // Add the user's profile information to the log object
+            // Add the user's profile information to the log object, if exists. Else, set the placeholder name as "Jane Doe"
             const user = await myJotDB.user.get({id: 1});
-            logObj.userName = user.userName;
+            logObj.userName = (user?.userName) ? user.userName : "Jane Doe";
             
-            // Add the contents of the exerciseLog table to the log object
+            // Add the contents of the exerciseLog table to the log object, if exists
             const exerciseLogs = await myJotDB.exerciseLog.toArray();
-            logObj.exerciseLogs = exerciseLogs;
+            if (exerciseLogs) {
+                logObj.exerciseLogs = exerciseLogs;
+            }
 
-            // Add the contents of the mealLog table to the log object
+            // Add the contents of the mealLog table to the log object, if exists
             const mealLogs = await myJotDB.mealLog.toArray();
-            logObj.mealLogs = mealLogs;
+            if (mealLogs) {
+                logObj.mealLogs = mealLogs;
+            }
 
-            // Add the contents of the exerciseRoutines table to the log object
+            // Add the contents of the exerciseRoutines table to the log object, if exists
             const exerciseRoutines = await myJotDB.exerciseRoutines.toArray();
-            logObj.exerciseRoutines = exerciseRoutines;
+            if (exerciseRoutines) {
+                logObj.exerciseRoutines = exerciseRoutines;
+            }
 
-            // Add the contents of the customMeals table to the log object
+            // Add the contents of the customMeals table to the log object, if exists
             const customMeals = await myJotDB.customMeals.toArray();
-            logObj.customMeals = customMeals;
+            if (customMeals) {
+                logObj.customMeals = customMeals;
+            }
         });      
 
         // Convert the log object into a JSON string for storage

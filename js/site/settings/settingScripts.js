@@ -239,8 +239,8 @@ window.addEventListener("appsetupcompleted", async function () {
             customMealsData = await myJotDB.customMeals.toArray();
         });
 
-        // Set the initial value of the input text field with the user's set username
-        userNameInput.value = generalSettingsData.userName;
+        // Set the initial value of the input text field with the user's username, if set
+        userNameInput.value = generalSettingsData?.userName ?? "Jane Doe";
 
         // Attach event listener to handle username changes and subsequent DB updates
         confirmChangesButton.addEventListener("click", async function () {

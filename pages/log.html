@@ -38,7 +38,8 @@
           <h3 class="mb-4 align-self-xl-start">History</h3>
           <span class="loader"></span>
           <div class="card p-4 d-none" id="app">
-            <p-datatable :value="logs" scrollable scrollHeight="5px" show-gridlines striped-rows>
+            <p v-if="!logs.length" class="text-center">No logs have been added yet.</p>
+            <p-datatable v-else :value="logs" scrollable scrollHeight="5px" show-gridlines striped-rows>
               <p-column field="category" header="Category"></p-column>
               <p-column field="name" header="Name"></p-column>
               <p-column field="datetime" header="Date & Time"></p-column>
