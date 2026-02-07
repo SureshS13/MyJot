@@ -157,13 +157,13 @@ window.addEventListener("appsetupcompleted", async function () {
         },
         /**
         * Updates an existing exercise with new values and resets its sets if the category changes.
-        * @param {number} id The 1‑based index of the exercise to update.
+        * @param {number} id The id of the exercise to update.
         * @param {string} name The updated exercise name.
         * @param {string} category The updated exercise category.
         * @param {string} notes Additional notes for the exercise.
         */
         updateExercise: function(id, name, category, notes) {
-            const exercise = this.addedExercises[id - 1];
+            const exercise = this.addedExercises.find(exercise => exercise.id === id);
 
             // If the category changes, wipe all set-specific data except id / type,
             // since different categories require different set fields.
@@ -269,20 +269,22 @@ window.addEventListener("appsetupcompleted", async function () {
         },
         /**
         * Adds a new set to the specified exercise. The new set is assigned a sequential id and order based on the current number of sets.
-        * @param {number} exerciseId The 1‑based identifier of the exercise to update.
+        * @param {number} exerciseId The id of the exercise to update.
         */
         addExerciseSet: function(exerciseId) {
-            this.addedExercises[exerciseId - 1].sets.push({
-                id: this.addedExercises[exerciseId - 1].sets.length + 1,
-                order: this.addedExercises[exerciseId - 1].sets.length + 1,
+            const exercise = this.addedExercises.find(exercise => exercise.id === exerciseId);
+
+            exercise.sets.push({
+                id: exercise.sets.length + 1,
+                order: exercise.sets.length + 1,
                 type: "Normal"
             });
         },
         /**
         * Updates the properties of a specific set within an exercise. 
         * The exact fields updated may vary depending on the exercise category or future data model changes.
-        * @param {number} exerciseId The 1‑based identifier of the exercise containing the set.
-        * @param {number} setId The 1‑based identifier of the set to update.
+        * @param {number} exerciseId The id of the exercise containing the set.
+        * @param {number} setId The id of the set to update.
         * @param {string} type The set type (e.g., "Normal", "Warm-up", etc.).
         * @param {number} [minutes] Optional duration in minutes.
         * @param {number} [seconds] Optional duration in seconds.
@@ -295,7 +297,7 @@ window.addEventListener("appsetupcompleted", async function () {
         * @param {string} [notes] Optional notes for the set.
         */
         updateExerciseSet: function(exerciseId, setId, type, minutes, seconds, distance, distanceUnitType, calories, reps, weight, weightUnitType, notes) {
-            const exercise = this.addedExercises[exerciseId - 1], set = exercise.sets[setId - 1];
+            const exercise = this.addedExercises.find(exercise => exercise.id === exerciseId), set = exercise.sets.find(set => set.id === setId);
 
             set.type = type;
             set.notes = notes;
@@ -332,11 +334,11 @@ window.addEventListener("appsetupcompleted", async function () {
         /**
         * Deletes a specific set from an exercise. 
         * Ensures that at least one set always remains and reassigns sequential order values after deletion.
-        * @param {number} exerciseId The 1‑based identifier of the exercise containing the set.
+        * @param {number} exerciseId The id of the exercise containing the set.
         * @param {number} order The 1‑based order position of the set to remove.
         */
         deleteExerciseSet: function(exerciseId, order) {
-            const exercise = this.addedExercises[exerciseId - 1];
+            const exercise = this.addedExercises.find(exercise => exercise.id === exerciseId);
 
             // Prevent deletion when only one set remains, since every exercise must retain at least one set
             if (exercise.sets.length <= 1) {
@@ -429,7 +431,7 @@ window.addEventListener("appsetupcompleted", async function () {
             <div class="p-4" :class='(setId > 1) ? "border border-light-subtle border-top-4 border-start-0 border-end-0" : ""'>
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="mb-0" style="padding-top: 0.15rem;">{{ set.order }}</h5>
-                    <i @click="workoutStore.deleteExerciseSet(exerciseId, set.order)" class="fa-solid fa-circle-minus fa-lg" :class="(workoutStore.addedExercises[exerciseId - 1].sets.length <= 1) ? 'd-none' : ''"></i> 
+                    <i @click="workoutStore.deleteExerciseSet(exerciseId, set.order)" class="fa-solid fa-circle-minus fa-lg" :class="(workoutStore.addedExercises.find(exercise => exercise.id === exerciseId).sets.length <= 1) ? 'd-none' : ''"></i> 
                 </div>
                 <div class="d-flex flex-column gap-2 mb-4">
                     <label for="set-type">Type</label>
