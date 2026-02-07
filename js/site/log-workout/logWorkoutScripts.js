@@ -660,7 +660,7 @@ window.addEventListener("appsetupcompleted", async function () {
                     setup: this.selectedExerciseSetup
                 };
            
-                if (this.selectedExerciseRoutine) {            
+                if (this.selectedExerciseSetup === "newfromexisting") {            
                     exerciseObj.routineId = this.selectedExerciseRoutine
                 } else {
                     exerciseObj.category = this.selectedNewExerciseType
