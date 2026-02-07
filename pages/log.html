@@ -37,12 +37,30 @@
         <section class="d-flex flex-column align-items-center">
           <h3 class="mb-4 align-self-xl-start">History</h3>
           <span class="loader"></span>
-          <div class="card p-4 d-none" id="app">
+          <div class="card p-4 mb-xl-5 d-none" id="app">
             <p v-if="!logs.length" class="text-center">No logs have been added yet.</p>
-            <p-datatable v-else :value="logs" scrollable scrollHeight="5px" show-gridlines striped-rows>
-              <p-column field="category" header="Category"></p-column>
-              <p-column field="name" header="Name"></p-column>
-              <p-column field="datetime" header="Date & Time"></p-column>
+            <p-datatable v-else :value="logs" :globalFilterFields="['category', 'name', 'datetime']" v-model:filters="filters" filter-display="menu" paginator :rows="5" :rows-per-page-options="[5, 10, 20, 50]" removable-sort show-gridlines striped-rows>
+              <template #header>
+                <div class="d-flex flex-column flex-xl-row justify-content-xl-between align-items-xl-center">
+                    <p-button class="order-1 order-xl-0" severity="secondary" label="Clear Filters" @click="clearAllFilters()"></p-button>
+                    <p-input-text class="mb-2 order-0 mb-xl-0 order-xl-1" v-model="filters['global'].value" placeholder="Search" />
+                </div>
+              </template>
+              <p-column field="category" header="Category" sortable>
+                <template #filter="{ filterModel, filterCallback }">
+                  <p-input-text v-model="filterModel.value" @input="filterCallback()" type="text" placeholder="Search by category" />
+                </template>
+              </p-column>
+              <p-column field="name" header="Name" sortable>
+                <template #filter="{ filterModel, filterCallback }">
+                  <p-input-text v-model="filterModel.value" @input="filterCallback()" type="text" placeholder="Search by name" />
+                </template>
+              </p-column>
+              <p-column field="datetime" header="Date & Time" sortable sort-field="sortableDateTime">
+                <template #filter="{ filterModel, filterCallback }">
+                  <p-input-text v-model="filterModel.value" @input="filterCallback()" type="text" placeholder="Search by date & time" />
+                </template>
+              </p-column>
               <p-column field="editlog" header="" :class="`text-center`">
                 <template #body="slotProps">
                   <a class="text-decoration-none text-black" :href="`${slotProps.data.editlog}`">

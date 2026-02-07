@@ -31,6 +31,7 @@ let generalSettingsData, customMealsData, exerciseRoutinesData;
 /***
 * Constructs a table row for each stored custom meal, and configures it with the necessary event listeners for the page.
 * @param {Object} customMeal The saved custom meal object retrieved from the DB
+* @returns {HTMLElement} The table row element for the custom meal
 */
 function buildCustomMealTableRow(customMeal) {
     const penIcon = createHTMLElement({
@@ -122,6 +123,7 @@ function buildCustomMealTableRow(customMeal) {
 /***
 * Constructs a table row for each stored routine, and configures it with the necessary event listeners for the page.
 * @param {Object} routine The saved routine object retrieved from the DB
+* @returns {HTMLElement} The table row element for the routine
 */
 function buildRoutineTableRow(routine) {
     const penIcon = createHTMLElement({

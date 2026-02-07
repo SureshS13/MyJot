@@ -37,6 +37,7 @@ window.addEventListener("appsetupcompleted", async function () {
                     category: "Exercise",
                     name: exerciseLog.logName,
                     datetime: new Date(exerciseLog.dateTime).toUTCString(),
+                    sortableDateTime: new Date(exerciseLog.dateTime).getTime(),
                     editlog: `${window.location.origin}/pages/log-workout.html?editWorkout=true&workoutId=${exerciseLog.id}`,
                     deletelog: `exercise,${exerciseLog.id}`
                 };
@@ -47,6 +48,7 @@ window.addEventListener("appsetupcompleted", async function () {
                     category: "Meal",
                     name: mealLog.logName,
                     datetime: new Date(mealLog.dateTime).toUTCString(),
+                    sortableDateTime: new Date(mealLog.dateTime).getTime(),
                     editlog: `${window.location.origin}/pages/log-meal.html?editMeal=true&mealId=${mealLog.id}`,
                     deletelog: `meal,${mealLog.id}`
                 };
@@ -84,16 +86,34 @@ window.addEventListener("appsetupcompleted", async function () {
     }
 
     // Import Vue's core API methods from the global Vue object
-    const { createApp } = Vue
+    const { createApp } = Vue;
 
+    // Import FilterOperator & FilterMatchMode from the global PrimeVue object to allow for column-specific filtering
+    const { FilterOperator, FilterMatchMode } = PrimeVue;
+    
     // Create a new Vue application instance with initial data and lifecycle hooks
     const app = createApp({
         data() {
             return {
-                logs: combinedLogs
+                logs: combinedLogs,
+                filters: {
+                    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+                    category: { operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.CONTAINS }] },
+                    name: { operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.CONTAINS }] },
+                    datetime: { operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.CONTAINS }] }
+                },
             }
         },
         methods: {
+            /**
+            * Clears all applied filters from the History datatable, including global search & any column-specific filters
+            */
+            clearAllFilters: function() {
+                this.filters.global.value = null;
+                this.filters.category.constraints[0].value = null;
+                this.filters.name.constraints[0].value = null;
+                this.filters.datetime.constraints[0].value = null;
+            },
             /**
             * Deletes a log entry (exercise or meal) from the database and updates the UI.
             * @async
@@ -120,18 +140,19 @@ window.addEventListener("appsetupcompleted", async function () {
                                 category: "Exercise",
                                 name: exerciseLog.logName,
                                 datetime: new Date(exerciseLog.dateTime).toUTCString(),
+                                sortableDateTime: new Date(exerciseLog.dateTime).getTime(),
                                 editlog: `${window.location.origin}/pages/log-workout.html?editWorkout=true&workoutId=${exerciseLog.id}`,
                                 deletelog: `exercise,${exerciseLog.id}`
                             };
                         });
 
                         mealLogs = mealLogsArray.map(mealLog => {
-                            console.error("still need to add the link to edit a log");
                             return {
                                 category: "Meal",
                                 name: mealLog.logName,
                                 datetime: new Date(mealLog.dateTime).toUTCString(),
-                                editlog: ``,
+                                sortableDateTime: new Date(mealLog.dateTime).getTime(),
+                                editlog: `${window.location.origin}/pages/log-meal.html?editMeal=true&mealId=${mealLog.id}`,
                                 deletelog: `meal,${mealLog.id}`
                             };
                         });
@@ -175,7 +196,9 @@ window.addEventListener("appsetupcompleted", async function () {
 
     // Register PrimeVue DataTable and Column components globally for use in templates
     app.component('p-datatable', PrimeVue.DataTable)
-        .component('p-column', PrimeVue.Column);
+        .component('p-column', PrimeVue.Column)
+        .component('p-button', PrimeVue.Button)
+        .component('p-input-text', PrimeVue.InputText);
     
     // Mount the Vue app to the #app container in the DOM
     app.mount('#app');
