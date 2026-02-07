@@ -43,7 +43,7 @@ function createNavbar(activePage) {
                                 <a class="nav-link d-inline ${activePage === 'log' ? 'active' : ''}" aria-current="page" href="/pages/log.html"><i class="fas fa-book fa-lg me-2"></i>Log</a>
                             </li>
                             <li class="nav-item px-5">               
-                                <a class="nav-link d-inline ${activePage === 'stats' ? 'active' : ''}" href="#"><i class="fa-solid fa-chart-column fa-lg me-2"></i>Stats</a>
+                                <a class="nav-link d-inline ${activePage === 'stats' ? 'active' : ''}" href="/pages/stats.html"><i class="fa-solid fa-chart-column fa-lg me-2"></i>Stats</a>
                             </li>
                             <li class="nav-item px-5">                  
                                 <a class="nav-link d-inline ${activePage === 'settings' ? 'active' : ''}" href="/pages/settings.html"><i class="fas fa-user-cog fa-lg me-2"></i>Settings</a>
@@ -61,7 +61,7 @@ function createNavbar(activePage) {
                         </a>
                     </div>
                     <div class="col ${activePage === 'stats' ? 'text-white' : 'text-secondary'}">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="/pages/stats.html">
                             <i class="fa-solid fa-chart-column fa-lg mb-2"></i>
                             <p>Stats</p>
                         </a>
