@@ -1,7 +1,7 @@
 /******************/
 /* Module Imports */
 /******************/
-import { parseHTMLToElement } from "/js/site/shared/SharedAppUtilities.js"
+import { parseHTMLToElement } from "/MyJot/js/site/shared/SharedAppUtilities.js"
 
 /**
 * Build a responsive navbar component for the given page.

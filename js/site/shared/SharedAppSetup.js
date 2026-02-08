@@ -1,8 +1,8 @@
 /******************/
 /* Module Imports */
 /******************/
-import { createHTMLElement } from "/js/site/shared/SharedAppUtilities.js"
-import { createNavbar } from "/js/site/shared/SharedAppComponents.js";
+import { createHTMLElement } from "/MyJot/js/site/shared/SharedAppUtilities.js";
+import { createNavbar } from "/MyJot/js/site/shared/SharedAppComponents.js";
 
 /*******************************************************/
 /* Const & let variable declarations & initializations */
@@ -18,20 +18,20 @@ const customScriptModulesMetaTag = document.querySelector("[data-custom-script-m
 const customSharedComponentsMetaTag = document.querySelector("[data-custom-shared-components]");
 const pageName = document.querySelector("[data-nav-label-override]")?.getAttribute("data-nav-label-override") ?? document.querySelector("title").textContent;
 const vendorCSSImportURlsObj = {
-    bootstrap: "/css/vendor/bootstrap/bootstrap.min.css"
+    bootstrap: "/MyJot/css/vendor/bootstrap/bootstrap.min.css"
 };
 const sharedSiteCSSImportUrlsObj = {
-    baseStyles: "/css/site/shared/baseStyles.css",
-    bootstrapOverrides: "/css/site/shared/bootstrapOverrides.css",
-    utilities: "/css/site/shared/utilities.css"
+    baseStyles: "/MyJot/css/site/shared/baseStyles.css",
+    bootstrapOverrides: "/MyJot/css/site/shared/bootstrapOverrides.css",
+    utilities: "/MyJot/css/site/shared/utilities.css"
 };
 const vendorJSImportURLsObj = {
-    vueJS: "/js/vendor/vue-js/vue.global.js",
-    primeVue: "/js/vendor/primevue/primevue.min.js",
-    aura: "/js/vendor/primevue/aura.js",
-    dexieJS: "/js/vendor/dexie-js/dexie.min.js",
-    bootstrap: "/js/vendor/bootstrap/bootstrap.bundle.min.js",
-    fontAwesome: "/js/vendor/fontawesome/fontawesome.js"
+    vueJS: "/MyJot/js/vendor/vue-js/vue.global.js",
+    primeVue: "/MyJot/js/vendor/primevue/primevue.min.js",
+    aura: "/MyJot/js/vendor/primevue/aura.js",
+    dexieJS: "/MyJot/js/vendor/dexie-js/dexie.min.js",
+    bootstrap: "/MyJot/js/vendor/bootstrap/bootstrap.bundle.min.js",
+    fontAwesome: "/MyJot/js/vendor/fontawesome/fontawesome.js"
 };
 
 /*********************/
