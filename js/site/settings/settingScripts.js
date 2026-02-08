@@ -1,7 +1,7 @@
 /******************/
 /* Module Imports */
 /******************/
-import { createHTMLElement } from "/js/site/shared/SharedAppUtilities.js"
+import { createHTMLElement } from "/MyJot/js/site/shared/SharedAppUtilities.js"
 
 /*******************************************************/
 /* Const & let variable declarations & initializations */
