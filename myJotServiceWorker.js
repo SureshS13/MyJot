@@ -118,10 +118,6 @@ self.addEventListener("fetch", function(event) {
             // Attempt to fetch the requested resource from the network
             const response = await fetch(event.request);
 
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
-            }
-
             return response;
         } catch (error) {
             // This block runs when: 
