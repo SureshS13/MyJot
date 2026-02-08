@@ -48,6 +48,9 @@ function createNavbar(activePage) {
                             <li class="nav-item px-5">                  
                                 <a class="nav-link d-inline ${activePage === 'settings' ? 'active' : ''}" href="/MyJot/pages/settings.html"><i class="fas fa-user-cog fa-lg me-2"></i>Settings</a>
                             </li>
+                            <li class="d-none d-xl-block nav-item px-5">                  
+                                <a class="nav-link d-inline" href="/MyJot/index.html"><i class="fa-solid fa-arrow-right-from-bracket fa-lg me-2"></i>Exit</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
