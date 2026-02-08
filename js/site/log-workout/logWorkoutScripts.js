@@ -34,7 +34,7 @@ window.addEventListener("appsetupcompleted", async function () {
         // Keeping a backup of the icon element, since replacing textContent will delete it
         const backArrowIcon = backButton.querySelector(".fa-solid");
 
-        backButton.href = "/pages/settings.html";
+        backButton.href = "/MyJot/pages/settings.html";
         backButton.textContent = "Return to Settings Page";
         backButton.prepend(backArrowIcon);
     }
@@ -715,7 +715,7 @@ window.addEventListener("appsetupcompleted", async function () {
                     } 
 
                     // Redirect users to either the log or settings page if their data was successfully validated and inserted into the IndexedDB for the session
-                    window.location.replace(`${window.location.origin}/pages/${(this.isAddRoutineMode || this.isEditRoutineMode) ? 'settings.html' : 'log.html'}`);
+                    window.location.replace(`${window.location.origin}/MyJot/pages/${(this.isAddRoutineMode || this.isEditRoutineMode) ? 'settings.html' : 'log.html'}`);
                 } catch (error) {
                     console.error(error.message);
 

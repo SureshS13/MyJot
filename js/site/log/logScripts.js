@@ -38,7 +38,7 @@ window.addEventListener("appsetupcompleted", async function () {
                     name: exerciseLog.logName,
                     datetime: new Date(exerciseLog.dateTime).toUTCString(),
                     sortableDateTime: new Date(exerciseLog.dateTime).getTime(),
-                    editlog: `${window.location.origin}/pages/log-workout.html?editWorkout=true&workoutId=${exerciseLog.id}`,
+                    editlog: `${window.location.origin}/MyJot/pages/log-workout.html?editWorkout=true&workoutId=${exerciseLog.id}`,
                     deletelog: `exercise,${exerciseLog.id}`
                 };
             });
@@ -49,7 +49,7 @@ window.addEventListener("appsetupcompleted", async function () {
                     name: mealLog.logName,
                     datetime: new Date(mealLog.dateTime).toUTCString(),
                     sortableDateTime: new Date(mealLog.dateTime).getTime(),
-                    editlog: `${window.location.origin}/pages/log-meal.html?editMeal=true&mealId=${mealLog.id}`,
+                    editlog: `${window.location.origin}/MyJot/pages/log-meal.html?editMeal=true&mealId=${mealLog.id}`,
                     deletelog: `meal,${mealLog.id}`
                 };
             });
@@ -141,7 +141,7 @@ window.addEventListener("appsetupcompleted", async function () {
                                 name: exerciseLog.logName,
                                 datetime: new Date(exerciseLog.dateTime).toUTCString(),
                                 sortableDateTime: new Date(exerciseLog.dateTime).getTime(),
-                                editlog: `${window.location.origin}/pages/log-workout.html?editWorkout=true&workoutId=${exerciseLog.id}`,
+                                editlog: `${window.location.origin}/MyJot/pages/log-workout.html?editWorkout=true&workoutId=${exerciseLog.id}`,
                                 deletelog: `exercise,${exerciseLog.id}`
                             };
                         });
@@ -152,7 +152,7 @@ window.addEventListener("appsetupcompleted", async function () {
                                 name: mealLog.logName,
                                 datetime: new Date(mealLog.dateTime).toUTCString(),
                                 sortableDateTime: new Date(mealLog.dateTime).getTime(),
-                                editlog: `${window.location.origin}/pages/log-meal.html?editMeal=true&mealId=${mealLog.id}`,
+                                editlog: `${window.location.origin}/MyJot/pages/log-meal.html?editMeal=true&mealId=${mealLog.id}`,
                                 deletelog: `meal,${mealLog.id}`
                             };
                         });

@@ -74,7 +74,7 @@ function buildCustomMealTableRow(customMeal) {
         attributes: [
             {
                 name: "href",
-                value: `${window.location.origin}/pages/log-meal.html?editCustomMeal=true&customMealId=${customMeal.id}`
+                value: `${window.location.origin}/MyJot/pages/log-meal.html?editCustomMeal=true&customMealId=${customMeal.id}`
             }
         ],
         children: [penIcon]
@@ -166,7 +166,7 @@ function buildRoutineTableRow(routine) {
         attributes: [
             {
                 name: "href",
-                value: `${window.location.origin}/pages/log-workout.html?editRoutine=true&routineId=${routine.id}`
+                value: `${window.location.origin}/MyJot/pages/log-workout.html?editRoutine=true&routineId=${routine.id}`
             }
         ],
         children: [penIcon]
@@ -353,9 +353,9 @@ window.addEventListener("appsetupcompleted", async function () {
 });
 
 addCustomMealButton.addEventListener("click", function () {
-    window.location.replace(`${window.location.origin}/pages/log-meal.html?addCustomMeal=true`);
+    window.location.replace(`${window.location.origin}/MyJot/pages/log-meal.html?addCustomMeal=true`);
 });
 
 addNewExerciseRoutineButton.addEventListener("click", function () {
-    window.location.replace(`${window.location.origin}/pages/log-workout.html?addRoutine=true`);
+    window.location.replace(`${window.location.origin}/MyJot/pages/log-workout.html?addRoutine=true`);
 });
