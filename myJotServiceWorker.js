@@ -24,6 +24,10 @@ const APP_STATIC_RESOURCES = [
     // Site fonts
     "/MyJot/misc/fonts/Inter/Inter-Italic-VariableFont_opsz,wght.ttf",
     "/MyJot/misc/fonts/Inter/Inter-VariableFont_opsz,wght.ttf",
+    "/MyJot/misc/fonts/FontAwesome/fa-brands-400.woff2",
+    "/MyJot/misc/fonts/FontAwesome/fa-regular-400.woff2",
+    "/MyJot/misc/fonts/FontAwesome/fa-solid-900.woff2",
+    "/MyJot/misc/fonts/FontAwesome/fa-v4compatibility.woff2",
 
     // Site HTML pages
     "/MyJot/index.html", 
@@ -35,6 +39,7 @@ const APP_STATIC_RESOURCES = [
 
     // Vendor CSS stylesheets 
     "/MyJot/css/vendor/bootstrap/bootstrap.min.css",
+    "/MyJot/css/vendor/fontawesome/all.min.css",
 
     // Site CSS stylesheets 
     "/MyJot/css/site/fileLoad/fileLoad.css",
@@ -49,7 +54,6 @@ const APP_STATIC_RESOURCES = [
     // Vendor JS libraries & scripts
     "/MyJot/js/vendor/bootstrap/bootstrap.bundle.min.js",
     "/MyJot/js/vendor/dexie-js/dexie.min.js",
-    "/MyJot/js/vendor/fontawesome/fontawesome.js",
     "/MyJot/js/vendor/primevue/aura.js",
     "/MyJot/js/vendor/primevue/primevue.min.js",
     "/MyJot/js/vendor/vue-js/vue.global.js",

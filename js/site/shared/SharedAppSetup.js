@@ -18,7 +18,8 @@ const customScriptModulesMetaTag = document.querySelector("[data-custom-script-m
 const customSharedComponentsMetaTag = document.querySelector("[data-custom-shared-components]");
 const pageName = document.querySelector("[data-nav-label-override]")?.getAttribute("data-nav-label-override") ?? document.querySelector("title").textContent;
 const vendorCSSImportURlsObj = {
-    bootstrap: "/MyJot/css/vendor/bootstrap/bootstrap.min.css"
+    bootstrap: "/MyJot/css/vendor/bootstrap/bootstrap.min.css",
+    fontAwesome: "/MyJot/css/vendor/fontawesome/all.min.css"
 };
 const sharedSiteCSSImportUrlsObj = {
     baseStyles: "/MyJot/css/site/shared/baseStyles.css",
@@ -30,8 +31,7 @@ const vendorJSImportURLsObj = {
     primeVue: "/MyJot/js/vendor/primevue/primevue.min.js",
     aura: "/MyJot/js/vendor/primevue/aura.js",
     dexieJS: "/MyJot/js/vendor/dexie-js/dexie.min.js",
-    bootstrap: "/MyJot/js/vendor/bootstrap/bootstrap.bundle.min.js",
-    fontAwesome: "/MyJot/js/vendor/fontawesome/fontawesome.js"
+    bootstrap: "/MyJot/js/vendor/bootstrap/bootstrap.bundle.min.js"
 };
 
 /*********************/
