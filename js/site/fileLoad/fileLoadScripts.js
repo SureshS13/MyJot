@@ -85,7 +85,7 @@ saveFileUploadInput.addEventListener("change", async function () {
         validationAlertComponent.classList.add("d-none");
 
         // Redirect users to the log page if their data was successfully validated and inserted into the IndexedDB for the session
-        window.location.replace(`${window.location.origin}/pages/log.html`);
+        window.location.replace(`${window.location.origin}/MyJot/pages/log.html`);
     } catch (error) {
         console.error(error.message);
 
