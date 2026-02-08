@@ -22,8 +22,8 @@ const APP_STATIC_RESOURCES = [
     "/MyJot/favicons/web-app-manifest-512x512.png",
 
     // Site fonts
-    "/MyJot/misc/fonts/Inter/Inter-Italic-VariableFont_opsz,wght.ttf",
-    "/MyJot/misc/fonts/Inter/Inter-VariableFont_opsz,wght.ttf",
+    "/MyJot/misc/fonts/Inter/InterVariable.woff2",
+    "/MyJot/misc/fonts/Inter/InterVariable-Italic.woff2",
     "/MyJot/misc/fonts/FontAwesome/fa-brands-400.woff2",
     "/MyJot/misc/fonts/FontAwesome/fa-regular-400.woff2",
     "/MyJot/misc/fonts/FontAwesome/fa-solid-900.woff2",
