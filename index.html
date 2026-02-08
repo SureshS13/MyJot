@@ -20,6 +20,23 @@
 
     <!-- Import the shared app setup script to dynamically add the necessary site CSS/JS and vendor CSS/JS to the document head. -->
     <script type="module" src="/MyJot/js/site/shared/SharedAppSetup.js"></script>
+
+    <!-- Register the MyJot service worker to enable offline PWA support -->
+    <script>
+      // Check if the browser supports service workers
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/MyJot/myJotServiceWorker.js")
+          .then((registration) => {
+            console.log("Service worker registered successfully:", registration);
+          })
+          .catch((error) => {
+            console.error("Service worker registration failed:", error);
+          });
+      } else {
+        console.error("Service workers are not supported in this browser.");
+      }
+    </script>
   </head>
   <body>
     <div class="container" id="file-upload-page-container">
