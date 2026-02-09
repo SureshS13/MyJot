@@ -272,7 +272,7 @@ saveDataButton.addEventListener("click", async function() {
         const endSession = window.confirm("Would you like to end your current session with MyJot? If yes, you will be redirected to the file upload page.");
 
         if (endSession) {
-            window.location.replace(`${window.location.origin}/index.html`);
+            window.location.replace(`${window.location.origin}/MyJot/index.html`);
         }
     } catch (error) {
         console.log(error.message);
