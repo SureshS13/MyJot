@@ -8,10 +8,6 @@ import { createNavbar } from "/MyJot/js/site/shared/SharedAppComponents.js";
 /* Const & let variable declarations & initializations */
 /*******************************************************/
 
-// Cache-busting version number appended to asset URLs to force browsers to reload updated files
-// For more info, read the following: https://sqlpey.com/javascript/effective-cache-busting-strategies/#dynamic-cache-busting-via-javascript-execution
-const ASSET_VERSION = 1;
-
 const customStylesheetsMetaTag = document.querySelector("[data-custom-stylesheets]");
 const customScriptsMetaTag = document.querySelector("[data-custom-scripts]");
 const customScriptModulesMetaTag = document.querySelector("[data-custom-script-modules]");
@@ -53,7 +49,7 @@ function createLinkTag(hrefValue) {
             },
             {
                 name: "href",
-                value: `${hrefValue}?v=${ASSET_VERSION}`
+                value: `${hrefValue}`
             }
         ]
     });
@@ -72,7 +68,7 @@ function createScriptTag(srcValue, isDeferred = false, isModule = false) {
         attributes: [
             {
                 name: "src",
-                value: `${srcValue}?v=${ASSET_VERSION}`
+                value: `${srcValue}`
             }
         ]
     });
