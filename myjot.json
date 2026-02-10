@@ -1,6 +1,7 @@
 {
   "name": "MyJot",
   "short_name": "MyJot",
+  "id": "/MyJot/",
   "start_url": "https://sureshs13.github.io/MyJot/",
   "description": "A free logging app that track your workouts and meals without ever needing to share your data. No sign up required.",
   "icons": [
