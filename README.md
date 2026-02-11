@@ -63,7 +63,7 @@ __Instructions__
 
 <br>
 
-<h1 align="center">Reporting Bugs</h1>
+<h1 align="center">Reporting bugs</h1>
 
 If you notice any bugs in the application, please open an issue to notify us.
 
