@@ -4,7 +4,7 @@
 
 // App version number & cache name used to ensure that when the app is updated, a new cache will be created and the old one will be deleted
 // For more info, read the following: https://sqlpey.com/javascript/effective-cache-busting-strategies/#dynamic-cache-busting-via-javascript-execution
-const VERSION = "0.1";
+const VERSION = "0.2";
 const CACHE_NAME = `myjot-${VERSION}`
 
 // Array of static resources needed to enable the PWA offline experience for MyJot
@@ -13,7 +13,7 @@ const APP_STATIC_RESOURCES = [
     "/MyJot/", 
 
     // Site web manifest file & favicons
-    "/MyJot/myjot.json",
+    "/MyJot/manifest.json",
     "/MyJot/favicons/apple-touch-icon.png",
     "/MyJot/favicons/favicon-96x96.png",
     "/MyJot/favicons/favicon.ico",
