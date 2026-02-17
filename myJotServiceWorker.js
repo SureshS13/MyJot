@@ -90,7 +90,7 @@ self.addEventListener("activate", function (event) {
         // Get the names of the existing named caches
         const names = await caches.keys();
 
-        /// Iterate through the list of cache names
+        // Iterate through the list of cache names
         // Delete all caches except the current one (CACHE_NAME) to clean up old versions
         await Promise.all(
             names.map((name) => {
