@@ -36,7 +36,7 @@ MyJot currently offers the following functionalities:
 MyJot stores your data in `.myjot` files that you save to your device each time you use the app. When you need to access your data, you will need to upload your `.myjot` file to the app, make your changes, and then save it back to your system. New users can start logging their information in the app without a prior `.myjot` file, and then save their data back onto their machine once finished for later access.
 
 > [!CAUTION]
-> MyJot, by design, does not persist your data past your current session. Please make sure that you save your data back as a `.myjot` file on your system before you close the app. <ins>There is nothing we can do to recover your data if you forget to export it out of the app before closing it.</ins>
+> Please make sure that you save your data back as a `.myjot` file on your system before you close the app. You will lose your changes if you close the app without saving them. <ins>There is nothing MyJot can do to recover your data if you forget to export it out of the app before closing it.</ins>
 
 <br>
 
