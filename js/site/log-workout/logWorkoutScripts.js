@@ -239,7 +239,7 @@ window.addEventListener("appsetupcompleted", async function () {
                 throw new Error("Please add at least one exercise before saving your workout.");
             }
 
-            // Add comment here
+            // Validate each exercise the user has added
             this.addedExercises.forEach(exercise => {
                 if (!exercise.name) {
                     throw new Error("Every exercise must include a name.");
