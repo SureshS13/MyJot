@@ -69,7 +69,7 @@ window.addEventListener("appsetupcompleted", async function () {
      
             const userObj = await myJotDB.user.get(1);
 
-            document.querySelector("#user-welcome-message").textContent = (userObj?.userName) ? `Welcome back ${userObj.userName}!` : "Welcome back Jane Doe!";
+            document.querySelector("#user-welcome-message").textContent = (userObj?.userName) ? `Welcome back ${userObj.userName}!` : "Welcome Jane Doe!";
         });
     } catch (error) {
         console.log(error.message);
