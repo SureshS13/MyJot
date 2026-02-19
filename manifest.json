@@ -5,6 +5,11 @@
   "start_url": "https://sureshs13.github.io/MyJot/index.html",
   "scope": "https://sureshs13.github.io/MyJot/",
   "description": "A free & open source PWA that logs your workouts and meals without ever needing to share your data. Works offline! No sign up required.",
+  "categories": [
+      "health",
+      "fitness",
+      "lifestyle"
+  ],
   "icons": [
     {
       "src": "/MyJot/favicons/web-app-manifest-192x192.png",
