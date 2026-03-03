@@ -94,19 +94,19 @@
                     </div>
                     <div class="d-flex flex-column gap-2 mb-4">
                         <label for="calories">Calories (Optional)</label>
-                        <p-input-number v-model="inputtedCalories" inputId="calories" :min="0" suffix=" cal" fluid />        
+                        <p-input-number v-model="inputtedCalories" inputId="calories" :min="0" :min-fraction-digits="2" :use-grouping="false" suffix=" cal" fluid />        
                     </div>
                     <div class="d-flex flex-column gap-2 mb-4">
                         <label for="protein">Protein (Optional)</label>
-                        <p-input-number v-model="inputtedProtein" inputId="protein" :min="0" suffix=" grams" fluid />        
+                        <p-input-number v-model="inputtedProtein" inputId="protein" :min="0" :min-fraction-digits="2" :use-grouping="false" suffix=" grams" fluid />        
                     </div>
                     <div class="d-flex flex-column gap-2 mb-4">
                         <label for="carbs">Carbs (Optional)</label>
-                        <p-input-number v-model="inputtedCarbs" inputId="carbs" :min="0" suffix=" grams" fluid />        
+                        <p-input-number v-model="inputtedCarbs" inputId="carbs" :min="0" :min-fraction-digits="2" :use-grouping="false" suffix=" grams" fluid />        
                     </div>
                     <div class="d-flex flex-column gap-2 mb-4">
                         <label for="Fats">Fats (Optional)</label>
-                        <p-input-number v-model="inputtedFats" inputId="fats" :min="0" suffix=" grams" fluid />        
+                        <p-input-number v-model="inputtedFats" inputId="fats" :min="0" :min-fraction-digits="2" :use-grouping="false" suffix=" grams" fluid />        
                     </div>
                 </section>
                 <div class="d-flex flex-column d-xl-block text-xl-center mb-xl-4">

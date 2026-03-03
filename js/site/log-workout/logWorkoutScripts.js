@@ -462,7 +462,7 @@ window.addEventListener("appsetupcompleted", async function () {
                     </div>
                     <div class="flex-xl-grow-1 mb-4 mb-xl-0">
                         <label class="mb-2" for="distance">Distance</label>
-                        <p-input-number v-model="setDistance" @update:modelValue="updateExerciseSet()" inputId="distance" :min="0" fluid />        
+                        <p-input-number v-model="setDistance" @update:modelValue="updateExerciseSet()" inputId="distance" :min="0" :min-fraction-digits="2" :use-grouping="false" fluid />        
                     </div>
                     <div class="flex-xl-grow-1 mb-0 mb-xl-0">
                         <label class="mb-2" for="set-weight-unit-type">Unit Type</label>
@@ -471,7 +471,7 @@ window.addEventListener("appsetupcompleted", async function () {
                 </div>
                 <div class="d-flex flex-column gap-2 mb-4" :class="(category !== 'Cardio') ? 'd-none' : ''">
                     <label for="calories">Calories (Optional)</label>
-                    <p-input-number v-model="setCalories" @update:modelValue="updateExerciseSet()" inputId="calories" :min="0" fluid /> 
+                    <p-input-number v-model="setCalories" @update:modelValue="updateExerciseSet()" inputId="calories" :min="0" :min-fraction-digits="2" :use-grouping="false" fluid /> 
                 </div>
                 <input v-model="setNotes" @input="updateExerciseSet()" type="text" class="optional-set-notes" contenteditable="true" placeholder="Add Set Notes (Optional)"></input>
             </div>

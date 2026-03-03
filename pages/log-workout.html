@@ -66,7 +66,7 @@
                     </div>
                     <div class="d-flex flex-column gap-2 mb-4">
                         <label for="bodyweight">Bodyweight</label>
-                        <p-input-number v-model="inputtedBodyWeight" inputId="bodyweight" :min="0" fluid />        
+                        <p-input-number v-model="inputtedBodyWeight" inputId="bodyweight" :min="0" :min-fraction-digits="2" :use-grouping="false" fluid />        
                     </div>
                     <div class="d-flex flex-column gap-2 mb-4">
                         <label for="weight-unit-type">Weight Unit Type (Optional)</label>
