@@ -380,8 +380,9 @@ window.addEventListener("appsetupcompleted", async function () {
                 if (!set.minutes) {
                     throw new Error("Please enter the number of minutes for each cardio set.");
                 }
-
-                if (!set.seconds) {
+                
+                // Only check for null & undefined values (rather than all falsy values), since 0 is a valid amount of seconds
+                if (set.seconds === null || set.seconds === undefined) {
                     throw new Error("Please enter the number of seconds for each cardio set.");
                 }
 
@@ -682,9 +683,14 @@ window.addEventListener("appsetupcompleted", async function () {
                     const obj = {};
 
                     obj.logName = this.inputtedLogName;
-                    obj.dateTime = this.selectedDateTime;
-                    obj.bodyWeight = this.inputtedBodyWeight;
-                    obj.weightUnitType = this.selectedUnitType;
+                    
+                    // The dateTime, bodyWeight and weightUnitType fields only need to be included in standard workout entries (not in routines)
+                    if (!this.isAddRoutineMode && !this.isEditRoutineMode) {
+                        obj.dateTime = this.selectedDateTime;
+                        obj.bodyWeight = this.inputtedBodyWeight;
+                        obj.weightUnitType = this.selectedUnitType;
+                    }
+                    
                     obj.logNotes = this.inputtedNotes;
                     
                     // Build a deep copy of the exercises array and sets subarray for storing in the DB
@@ -702,7 +708,7 @@ window.addEventListener("appsetupcompleted", async function () {
                     if (this.isEditRoutineMode || this.isEditWorkoutMode) {
                         obj.id = logData.id;
                     }
-
+                    
                     // Add or replace the exercise log object in the DB
                     if (this.isAddRoutineMode || this.isEditRoutineMode) {
                         await myJotDB.transaction("rw", myJotDB.exerciseRoutines, async function () {
@@ -745,7 +751,7 @@ window.addEventListener("appsetupcompleted", async function () {
                     throw new Error("A valid date & time is required.");
                 }
 
-                if (!this.inputtedBodyWeight) {
+                if (!this.inputtedBodyWeight && !this.isAddRoutineMode && !this.isEditRoutineMode) {
                     throw new Error("A valid bodyweight is required.");
                 }   
 
