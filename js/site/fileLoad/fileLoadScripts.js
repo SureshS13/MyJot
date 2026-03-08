@@ -60,7 +60,7 @@ saveFileUploadInput.addEventListener("change", async function () {
             }
 
             // Iterate through each meal log and add it to the 'mealLog' table
-            if (Array.isArray(logObj.mealLog)) {
+            if (Array.isArray(logObj.mealLogs)) {
                 for (const obj of logObj.mealLogs) {
                     await myJotDB.mealLog.add(obj);
                 }
