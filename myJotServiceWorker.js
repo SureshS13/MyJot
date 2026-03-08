@@ -4,7 +4,7 @@
 
 // App version number & cache name used to ensure that when the app is updated, a new cache will be created and the old one will be deleted
 // For more info, read the following: https://sqlpey.com/javascript/effective-cache-busting-strategies/#dynamic-cache-busting-via-javascript-execution
-const VERSION = "0.6";
+const VERSION = "0.7";
 const CACHE_NAME = `myjot-${VERSION}`
 
 // Array of static resources needed to enable the PWA offline experience for MyJot
@@ -47,6 +47,7 @@ const APP_STATIC_RESOURCES = [
     "/MyJot/css/site/log-meal/log-meal.css",
     "/MyJot/css/site/log-workout/log-workout.css",
     "/MyJot/css/site/settings/settings.css",
+    "/MyJot/css/site/stats/stats.css",
     "/MyJot/css/site/shared/baseStyles.css",
     "/MyJot/css/site/shared/bootstrapOverrides.css",
     "/MyJot/css/site/shared/utilities.css",
@@ -58,6 +59,7 @@ const APP_STATIC_RESOURCES = [
     "/MyJot/js/vendor/primevue/primevue.min.js",
     "/MyJot/js/vendor/vue-js/vue.global.js",
     "/MyJot/js/site/log-workout/drag-drop-touch.esm.min.js",
+    "/MyJot/js/site/stats/apexcharts.min.js",
 
     // Site JS scripts
     "/MyJot/js/site/fileLoad/fileLoadScripts.js",
@@ -65,6 +67,7 @@ const APP_STATIC_RESOURCES = [
     "/MyJot/js/site/log-meal/logMealScripts.js",
     "/MyJot/js/site/log-workout/logWorkoutScripts.js",
     "/MyJot/js/site/settings/settingScripts.js",
+    "/MyJot/js/site/stats/statsScripts.js",
     "/MyJot/js/site/shared/SharedAppComponents.js",
     "/MyJot/js/site/shared/SharedAppSetup.js",
     "/MyJot/js/site/shared/SharedAppUtilities.js"

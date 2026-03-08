@@ -36,7 +36,7 @@ window.addEventListener("appsetupcompleted", async function () {
                 return {
                     category: "Exercise",
                     name: exerciseLog.logName,
-                    datetime: new Date(exerciseLog.dateTime).toUTCString(),
+                    datetime: new Date(exerciseLog.dateTime).toString(),
                     sortableDateTime: new Date(exerciseLog.dateTime).getTime(),
                     editlog: `${window.location.origin}/MyJot/pages/log-workout.html?editWorkout=true&workoutId=${exerciseLog.id}`,
                     deletelog: `exercise,${exerciseLog.id}`
@@ -47,7 +47,7 @@ window.addEventListener("appsetupcompleted", async function () {
                 return {
                     category: "Meal",
                     name: mealLog.logName,
-                    datetime: new Date(mealLog.dateTime).toUTCString(),
+                    datetime: new Date(mealLog.dateTime).toString(),
                     sortableDateTime: new Date(mealLog.dateTime).getTime(),
                     editlog: `${window.location.origin}/MyJot/pages/log-meal.html?editMeal=true&mealId=${mealLog.id}`,
                     deletelog: `meal,${mealLog.id}`
@@ -139,7 +139,7 @@ window.addEventListener("appsetupcompleted", async function () {
                             return {
                                 category: "Exercise",
                                 name: exerciseLog.logName,
-                                datetime: new Date(exerciseLog.dateTime).toUTCString(),
+                                datetime: new Date(exerciseLog.dateTime).toString(),
                                 sortableDateTime: new Date(exerciseLog.dateTime).getTime(),
                                 editlog: `${window.location.origin}/MyJot/pages/log-workout.html?editWorkout=true&workoutId=${exerciseLog.id}`,
                                 deletelog: `exercise,${exerciseLog.id}`
@@ -150,7 +150,7 @@ window.addEventListener("appsetupcompleted", async function () {
                             return {
                                 category: "Meal",
                                 name: mealLog.logName,
-                                datetime: new Date(mealLog.dateTime).toUTCString(),
+                                datetime: new Date(mealLog.dateTime).toString(),
                                 sortableDateTime: new Date(mealLog.dateTime).getTime(),
                                 editlog: `${window.location.origin}/MyJot/pages/log-meal.html?editMeal=true&mealId=${mealLog.id}`,
                                 deletelog: `meal,${mealLog.id}`
