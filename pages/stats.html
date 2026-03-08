@@ -12,6 +12,10 @@
     <meta name="apple-mobile-web-app-title" content="MyJot" />
     <link rel="manifest" href="/MyJot/myjot.json" />
 
+    <!-- Custom metadata: defines page-specific CSS and JS resources to load via a comma‑separated list. Failures are unhandled to ensure fast failure -->
+    <meta data-custom-stylesheets="/MyJot/css/site/stats/stats.css">
+    <meta data-custom-scripts="/MyJot/js/site/stats/statsScripts.js,/MyJot/js/site/stats/apexcharts.min.js">
+
     <!-- Optional custom metadata: defines any page-specific components to include via a comma‑separated list. Failures are unhandled to ensure fast failure -->
     <meta data-custom-shared-components="navbar">
 
@@ -22,10 +26,96 @@
   </head>
   <body>
     <div class="container" id="stats-page-container">
-        <h1 class="text-center p-2"> 
-            <i class="fa-solid fa-screwdriver-wrench"></i>
-            Coming soon!
-        </h1>
+      <header class="d-flex flex-column align-items-center mb-5">
+        <div class="alert alert-danger mb-5 d-none" id="stats-validation-errors-alert" role="alert"></div>
+        <h1 class="align-self-xl-start">Stats</h1>
+      </header>
+      <section>
+        <div class="segmented-control-component mb-5 d-none">
+          <div class="segmented-control-button selected-segment-control" id="today-segmented-control-button">
+            Today
+          </div>
+          <div class="segmented-control-button" id="this-week-segmented-control-button">
+            This Week
+          </div>
+        </div>
+        <main>
+          <div class="d-flex justify-content-center" id="loader-container">
+            <span class="loader"></span>
+          </div>
+          <section class="reporting-modules-container d-none" id="daily-reports">
+            <div class="reporting-module" id="todays-calories-report">
+              <div>
+                <small>Calories Eaten</small>
+                <h1><span id="todays-calories-report-calories-eaten">2300</span> cal 
+                  <small class="fw-normal intake-limit d-none"> / &nbsp; <span class="user-set-daily-calorie-count">10000</span></small>
+                </h1>
+                <div class="progress d-none" role="progressbar" aria-label="Today's eaten calorie count">
+                  <div class="progress-bar progress-bar-striped" style="width: 10%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="reporting-module" id="todays-protein-report">
+              <div>
+                <small>Protein Eaten</small>
+                <h1>
+                  <span id="todays-protein-report-protein-eaten">156</span> g 
+                  <small class="fw-normal intake-limit d-none"> / &nbsp; <span class="user-set-daily-protein-count">2000</span></small>
+                </h1>
+                <div class="progress d-none" role="progressbar" aria-label="Today's eaten protein count">
+                  <div class="progress-bar progress-bar-striped bg-protein" style="width: 10%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="reporting-module" id="todays-fats-report">
+              <div>
+                <small>Fats Eaten</small>
+                <h1>
+                  <span id="todays-fats-report-fats-eaten">23</span> g 
+                  <small class="fw-normal intake-limit d-none"> / &nbsp; <span class="user-set-daily-fats-count">500</span></small>
+                </h1>
+                <div class="progress d-none" role="progressbar" aria-label="Today's eaten fats count">
+                  <div class="progress-bar progress-bar-striped bg-fat" style="width: 10%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="reporting-module" id="todays-carbs-report">
+              <div>
+                <small>Carbs Eaten</small>
+                <h1>
+                  <span id="todays-carbs-report-carbs-eaten">56</span> g 
+                  <small class="fw-normal intake-limit d-none"> / &nbsp; <span class="user-set-daily-carbs-count">500</span></small>
+                </h1>
+                <div class="progress d-none" role="progressbar" aria-label="Today's eaten carbs count">
+                  <div class="progress-bar progress-bar-striped bg-carbs" style="width: 10%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="reporting-module" id="todays-calories-burned-report">
+              <div>
+                <small>Calories Burned</small>
+                <h1 class="mb-0">
+                  <span id="todays-calories-burned-report-calories-burned">1000</span> cal 🔥
+                </h1>
+              </div>
+            </div>
+          </section>
+          <section class="reporting-modules-container d-none" id="weekly-reports">
+            <div class="reporting-module reporting-module-apex-chart" id="weekly-weight-tracker-report">
+              <div>
+                <h5>Weight Changes</h5>
+                <div id="weight-tracker-chart"></div>
+              </div>
+            </div>
+            <div class="reporting-module reporting-module-apex-chart" id="weekly-calories-eaten-report">
+              <div>
+                <h5>Caloric Intake</h5>
+                <div id="calories-eaten-chart"></div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </section>
     </div>
   </body>
 </html>
