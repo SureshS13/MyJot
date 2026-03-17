@@ -59,7 +59,16 @@ function getFirstDayOfWeek(currentDate = new Date(), startDay = 1) {
 */
 function toggleMacroProgressDisplay(target, currentTotal, reportContainerElement) {
     if (target) {
-        reportContainerElement.querySelector(".progress-bar").style.width = `${(target * (currentTotal / 100)) * 100}%`;
+        const progressBarElement = reportContainerElement.querySelector(".progress-bar"), percentConsumed = (currentTotal / target) * 100;
+
+        progressBarElement.style.width = `${percentConsumed}%`;
+
+        // If the user has exceeded their daily intake limit, add a warning message and color to the progress bar
+        if (percentConsumed > 100) {
+            progressBarElement.classList.add("bg-danger", "fw-bold");
+            progressBarElement.textContent = `Daily Limit Exceeded!`;
+        }
+
         reportContainerElement.querySelector(".progress").classList.remove("d-none");
         reportContainerElement.querySelector(".intake-limit")?.classList.remove("d-none");
     } else {
@@ -107,7 +116,7 @@ function generateApexLineChartConfigs({ chartName = "", chartData, chartLineColo
         },
         stroke: {
             width: 3,
-            curve: 'monotoneCubic'
+            curve: 'monotoneCubic' // Need to use this as the curve value to fix this issue here - https://github.com/apexcharts/apexcharts.js/issues/3641#issuecomment-2364018025
         },
         markers: {
             size: 5
@@ -134,15 +143,19 @@ function updateDailyFitnessReports({ dailyCalorieTarget, dailyProteinTarget, dai
     // Populate the each of the daily macro count reports, and show the progress bar or adjust the spacing if the user has set a daily target
     todaysCaloriesEatenUserValueSpan.textContent = caloriesEaten;
     toggleMacroProgressDisplay(dailyCalorieTarget, caloriesEaten, todaysCaloriesEatenReportContainer);
-    
+    todaysCaloriesEatenReportContainer.querySelector(".user-set-daily-target").innerHTML = `/ &nbsp; ${dailyCalorieTarget}`;
+
     todaysProteinEatenUserValueSpan.textContent = proteinEaten;
     toggleMacroProgressDisplay(dailyProteinTarget, proteinEaten, todaysProteinEatenReportContainer);
+    todaysProteinEatenReportContainer.querySelector(".user-set-daily-target").innerHTML = `/ &nbsp; ${dailyProteinTarget}`;
 
     todaysFatsEatenUserValueSpan.textContent = fatsEaten;
     toggleMacroProgressDisplay(dailyFatTarget, fatsEaten, todaysFatsEatenReportContainer);
+    todaysFatsEatenReportContainer.querySelector(".user-set-daily-target").innerHTML = `/ &nbsp; ${dailyFatTarget}`;
 
     todaysCarbsEatenUserValueSpan.textContent = carbsEaten;
     toggleMacroProgressDisplay(dailyCarbsTarget, carbsEaten, todaysCarbsEatenReportContainer);
+    todaysCarbsEatenReportContainer.querySelector(".user-set-daily-target").innerHTML = `/ &nbsp; ${dailyCarbsTarget}`;
 
     // Populate the calories burned report with the total amount of burned calories
     todaysCaloriesBurnedUserValueSpan.textContent = caloriesBurned;
@@ -229,7 +242,14 @@ window.addEventListener("appsetupcompleted", async function () {
         await myJotDB.open();
 
         // Retrieve the macro goal data from the DB to display in reporting modules (if set), and query the DB for the data needed for our reports
-        await myJotDB.transaction("r", myJotDB.exerciseLog, myJotDB.mealLog, myJotDB.user, async function () {    
+        await myJotDB.transaction("r", myJotDB.exerciseLog, myJotDB.mealLog, myJotDB.userMacroGoals, async function () { 
+            const userMacroGoalsObj = await myJotDB.userMacroGoals.get(1);
+            
+            dailyCalorieTarget = userMacroGoalsObj?.dailyCalorieGoal;
+            dailyProteinTarget = userMacroGoalsObj?.dailyProteinGoal;
+            dailyFatTarget = userMacroGoalsObj?.dailyFatsGoal;
+            dailyCarbsTarget = userMacroGoalsObj?.dailyCarbsGoal;
+            
             const exerciseLogsFromThisWeek = await myJotDB.exerciseLog
                 .where("dateTime")
                 .aboveOrEqual(startOfCurrentWeek) // Include all entries from this week
@@ -293,12 +313,14 @@ window.addEventListener("appsetupcompleted", async function () {
                     }
                 }
             });
-            
-            console.error("Still need to pull the user set information from settings");
         });
-
+        
         // Populate all daily reports using our queried values
         updateDailyFitnessReports({
+            dailyCalorieTarget,
+            dailyProteinTarget,
+            dailyFatTarget,
+            dailyCarbsTarget,
             caloriesEaten: caloriesEatenToday,
             dailyCalorieTarget,
             proteinEaten: proteinEatenToday,

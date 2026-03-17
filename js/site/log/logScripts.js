@@ -217,10 +217,18 @@ saveDataButton.addEventListener("click", async function() {
         const logObj = {};
 
         // Start a read transaction to pull all table data from the DB for saving locally
-        await myJotDB.transaction('r', myJotDB.user, myJotDB.exerciseLog, myJotDB.mealLog, myJotDB.exerciseRoutines, myJotDB.customMeals, async function () {
+        await myJotDB.transaction('r', myJotDB.user, myJotDB.userMacroGoals, myJotDB.exerciseLog, myJotDB.mealLog, myJotDB.exerciseRoutines, myJotDB.customMeals, async function () {
             // Add the user's profile information to the log object, if exists. Else, set the placeholder name as "Jane Doe"
             const user = await myJotDB.user.get({id: 1});
             logObj.userName = (user?.userName) ? user.userName : "Jane Doe";
+
+            // Add the user's macro goal profile information to the log object, if exists and is not null. Else, do not add it to the log object
+            const userMacroGoals = await myJotDB.userMacroGoals.get({id: 1});
+            for (const [key, value] of Object.entries(userMacroGoals)) {
+                if (key !== "id" && value !== null) {
+                    logObj[key] = value;
+                }
+            }
             
             // Add the contents of the exerciseLog table to the log object, if exists
             const exerciseLogs = await myJotDB.exerciseLog.toArray();
