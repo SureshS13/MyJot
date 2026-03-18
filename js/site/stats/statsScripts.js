@@ -36,8 +36,8 @@ let myJotDB;
 
 /**
 * Returns the first day of the week (configurable) for the given date.
+* @param {Date} [currentDate=new Date()] The input date (defaults to current date).
 * @param {number} [startDay=1] The day to treat as the first day of the week (0=Sunday, 1=Monday, etc.).
-* @param {Date} [date=new Date()] The input date (defaults to current date).
 * @returns {Date} A new Date object set to the first day of the week at 00:00:00.
 */
 function getFirstDayOfWeek(currentDate = new Date(), startDay = 1) {
@@ -48,6 +48,23 @@ function getFirstDayOfWeek(currentDate = new Date(), startDay = 1) {
   firstDayOfWeekDate.setHours(0, 0, 0, 0); // Reset time to 00:00:00.000
 
   return firstDayOfWeekDate;
+}
+
+/**
+* Returns the last day of the week (configurable) for the given date.
+* @param {Date} [currentDate=new Date()] The input date (defaults to current date).
+* @returns {Date} A new Date object set to the last day of the week at 23:59:59.
+*/
+function getLastDayOfWeek(currentDate = new Date())
+{
+    // Calculate the date of the last day of the week by adding the difference between the day of the month and the day of the week, then adding 6
+    const lastDay = currentDate.getDate() - (currentDate.getDay() - 1) + 6;
+
+    // Set the date to the calculated last day of the week, and adjust the hours to reflect the end of the day
+    const lastDayOfWeekDate = new Date(currentDate.setDate(lastDay));
+    lastDayOfWeekDate.setHours(23, 59, 59);
+
+    return lastDayOfWeekDate;
 }
 
 /**
@@ -79,6 +96,7 @@ function toggleMacroProgressDisplay(target, currentTotal, reportContainerElement
 /**
 * Generates a configuration object for an ApexCharts line chart.
 * The configuration includes chart type, dimensions, toolbar options, series data, axis labels, and styling.
+* If the chart data contains only one non-null value, the chart is rendered as a scatter plot to ensure the single marker is visible.
 * @param {Object} config Configuration options for the chart.
 * @param {string} [config.chartName=""] The name of the chart series (displayed in the legend).
 * @param {Array<number|null>} config.chartData The data points for the chart series. Can include `null` values for missing data.
@@ -86,9 +104,15 @@ function toggleMacroProgressDisplay(target, currentTotal, reportContainerElement
 * @returns {Object} ApexCharts configuration object for a line chart.
 */
 function generateApexLineChartConfigs({ chartName = "", chartData, chartLineColor = "#000000" }) {
+    // Count the number of non-null data points to determine if a scatter plot should be used
+    // For more information, see this GitHub issue here - https://github.com/apexcharts/apexcharts.js/issues/235#issuecomment-448346391
+    const validDataPointCount = chartData.reduce(function (accumulator, currentValue) {
+        return (currentValue) ? accumulator + 1 : accumulator;
+    }, 0);
+    
     return {
         chart: {
-            type: 'line',
+            type: (validDataPointCount === 1) ? 'scatter' : 'line',
             height: "100%",
             width: "100%",
             toolbar: {
@@ -218,7 +242,7 @@ function generateWeeklyReportLineCharts(weeklyWeightChangesMap, weeklyCaloricInt
 /* Event listeners, Method Calls, and Other Misc. Actions */
 /**********************************************************/
 window.addEventListener("appsetupcompleted", async function () {
-    const startOfCurrentWeek = getFirstDayOfWeek();
+    const startOfCurrentWeek = getFirstDayOfWeek(), endOfCurrentWeek = getLastDayOfWeek();
 
     // Declare and initialize a new Date object variable to represent the earliest time of the current date
     let startOfToday = new Date();
@@ -249,15 +273,22 @@ window.addEventListener("appsetupcompleted", async function () {
             dailyProteinTarget = userMacroGoalsObj?.dailyProteinGoal;
             dailyFatTarget = userMacroGoalsObj?.dailyFatsGoal;
             dailyCarbsTarget = userMacroGoalsObj?.dailyCarbsGoal;
+
+            // Callback function to filter logs by a weekly date range
+            // Used in Dexie.js queries to include only entries within the current week
+            const isLogInCurrentWeek = function(logObj) {
+                const logDate = new Date(logObj.dateTime);
+                    
+                // Include all entries from the current week
+                return (logDate >= startOfCurrentWeek && logDate <= endOfCurrentWeek);
+            };
             
             const exerciseLogsFromThisWeek = await myJotDB.exerciseLog
-                .where("dateTime")
-                .aboveOrEqual(startOfCurrentWeek) // Include all entries from this week
+                .filter(isLogInCurrentWeek) 
                 .toArray();
       
             const mealLogsFromThisWeek = await myJotDB.mealLog
-                .where("dateTime")
-                .aboveOrEqual(startOfCurrentWeek) // Include all entries from today
+                .filter(isLogInCurrentWeek) 
                 .toArray();
             
             exerciseLogsFromThisWeek.forEach(exerciseLog => {
