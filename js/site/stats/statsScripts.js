@@ -130,7 +130,7 @@ function generateApexLineChartConfigs({ chartName = "", chartData, chartLineColo
         },
         series: [{
             name: chartName,
-            data: chartData
+            data: (validDataPointCount) ? chartData : []
         }],
         xaxis: {
             categories: ["M", "T", "W", "Th", "F", "S", "Su"]
@@ -145,7 +145,14 @@ function generateApexLineChartConfigs({ chartName = "", chartData, chartLineColo
         markers: {
             size: 5
         },
-        colors: [chartLineColor]
+        colors: [chartLineColor],
+        noData: {
+            text: "No Data to Display",
+            align: 'center',
+            verticalAlign: 'middle',
+            offsetX: 15,
+            offsetY: -25
+        }
     };
 }
 
