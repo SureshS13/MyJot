@@ -24,10 +24,9 @@ MyJot was built to be easy to use and privacy-focused. We do not store or sell y
 
 MyJot currently offers the following functionalities:
 
-- Log meals
-- Log workouts
-- Add custom meal presets
-- Add custom workout presets
+- Logging meals and workouts.
+- Adding custom meal and workout presets.
+- An at-a-glance dashboard that includes important metrics that break down your weight, calories burned, and macros consumed (categorized by day and week), with the ability to set daily targets for each macro.
 
 <br>
 
@@ -44,7 +43,7 @@ MyJot stores your data in `.myjot` files that you save to your device each time 
 
 Some of the current items planned are:
 
-- Adding reporting capabilities (on the "Stats" page).
+- Adding functionality for users to submit a support ticket or be redirected to this repository to create a new issue.
 - Adding functionality to use Web Workers for files 1-10MB to keep UI responsive as `.myjot` files grow larger in size.
 
 <br>
@@ -53,12 +52,12 @@ Some of the current items planned are:
 
 __Prerequisites__
 
-- A browser
-- A code editor or IDE (**Visual Studio Code** should suffice)
-- A local development server that supports live browser reload (we used [Live Server](https://github.com/ritwickdey/vscode-live-server))
+- A browser.
+- A code editor or IDE (**Visual Studio Code** should suffice).
+- A local development server that supports live browser reload (we used [Live Server](https://github.com/ritwickdey/vscode-live-server)).
 
 __Instructions__
-1. Clone the repository
+1. Clone the repository.
 2. Launch the website using the development server.
 
 <br>
