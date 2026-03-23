@@ -46,10 +46,18 @@ saveFileUploadInput.addEventListener("change", async function () {
         await myJotDB.open();
        
         // Start a read-write transaction to safely add all log data to the DB
-        await myJotDB.transaction('rw', myJotDB.user, myJotDB.exerciseLog, myJotDB.mealLog, myJotDB.exerciseRoutines, myJotDB.customMeals, async function () {
+        await myJotDB.transaction('rw', myJotDB.user, myJotDB.userMacroGoals, myJotDB.exerciseLog, myJotDB.mealLog, myJotDB.exerciseRoutines, myJotDB.customMeals, async function () {
             // Add the user's profile information to the 'user' table
             await myJotDB.user.add({
                 userName: logObj.userName
+            });
+            
+            // Add the user's macro goal information to the 'userMacroGoals' table
+            await myJotDB.userMacroGoals.add({
+                dailyCalorieGoal: logObj.dailyCalorieGoal,
+                dailyProteinGoal: logObj.dailyProteinGoal,
+                dailyFatsGoal: logObj.dailyFatsGoal,
+                dailyCarbsGoal: logObj.dailyCarbsGoal
             });
             
             // Iterate through each exercise log and add it to the 'exerciseLog' table
@@ -60,7 +68,7 @@ saveFileUploadInput.addEventListener("change", async function () {
             }
 
             // Iterate through each meal log and add it to the 'mealLog' table
-            if (Array.isArray(logObj.mealLog)) {
+            if (Array.isArray(logObj.mealLogs)) {
                 for (const obj of logObj.mealLogs) {
                     await myJotDB.mealLog.add(obj);
                 }

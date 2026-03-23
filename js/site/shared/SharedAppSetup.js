@@ -153,10 +153,12 @@ if (customSharedComponentsMetaTag?.getAttribute("data-custom-shared-components")
 window.getMyJotDBSchemaObj = function() {
     return {
             user: '++id, userName',
+            userMacroGoals: '++id, dailyCalorieGoal, dailyProteinGoal, dailyFatsGoal, dailyCarbsGoal',
             exerciseLog: '++id, logName, dateTime, bodyWeight, weightUnitType, logNotes, *exercises',
             mealLog: '++id, logName, dateTime, logNotes, mealName, mealType, calories, protein, carbs, fats',
             exerciseRoutines: '++id, logName, logNotes, *exercises',
             customMeals: '++id, logName, logNotes, mealName, mealType, calories, protein, carbs, fats',
+
     }
 };
 

@@ -1,0 +1,167 @@
+#stats-validation-errors-alert {
+    width: 100%;
+}
+
+.segmented-control-component {
+    display: flex;
+    width: fit-content;
+    border: 1px solid black;
+    border-radius: 0.5rem;
+}
+
+.segmented-control-component > .segmented-control-button {
+    text-align: center;
+    padding: 0.5rem;
+    height: 100%;
+    border-radius: 0.5rem;
+    width: 10rem;
+    user-select: none;
+    -webkit-user-select: none; /* Safari */
+}
+
+.segmented-control-component > .segmented-control-button:hover {
+    cursor: pointer;
+}
+
+.selected-segment-control {
+    color: white;
+    background-color: black;
+}
+
+/*************************************/
+/* Reporting Module Container Styles */
+/*************************************/
+
+.reporting-modules-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/***********************************/
+/* Default Reporting Module Styles */
+/***********************************/
+
+.reporting-module {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-basis: 49%;
+    height: 10rem;
+    margin-bottom: 2%;
+    border-radius: 0.5rem;
+    background-color: white;
+    filter: drop-shadow(-3px 2px 7px #dddddd);
+    overflow: auto;
+}
+
+/*******************************************/
+/* Default Reporting Module Spacing Styles */
+/*******************************************/
+
+.reporting-module:nth-of-type(even) {
+    margin-left: 2%;
+}
+
+/*******************************************/
+/* Default Reporting Module Content Styles */
+/*******************************************/
+
+.reporting-module > div {
+    width: 80%;
+}
+
+.reporting-module > div > small {
+    display: inline-block;
+    margin-bottom: 0.25rem;
+}
+
+.reporting-module > div > h1 {
+    margin-bottom: 1rem;
+}
+
+/**********************************************************************/
+/* Extended Reporting Chart Module Styles (Extends .reporting-module) */
+/**********************************************************************/
+/*    Note: This class is applied in addition to .reporting-module    */
+
+.reporting-module-apex-chart {
+    height: 20rem;
+    overflow: visible;
+}
+
+.reporting-module-apex-chart > div {
+    width: 98%;
+    padding: 1rem;
+}
+
+.reporting-module-apex-chart > div > h5 {
+    padding: 1rem;
+}
+
+.reporting-module-apex-chart > div > div {
+    margin-right: 1rem;
+}
+
+/*******************************************/
+/* Daily Reports Progress Bar Macro Colors */
+/*******************************************/
+
+.bg-protein {
+    background-color: #feb23e;
+}
+
+.bg-fat {
+    background-color: #6a0f8d;
+}
+
+.bg-carbs {
+    background-color: #2db8af;
+}
+
+.bg-burned-calories {
+    background-color: #F56476;
+}
+
+@media screen and (max-width: 1200px) {
+    body {
+        padding-bottom: 6rem; /* Accounts for 4rem mobile navbar height plus 2rem extra spacing on the settings page */
+    }
+
+    .segmented-control-component {
+        width: 85%;
+        margin: 0 auto;
+    }
+
+    .segmented-control-component > .segmented-control-button {
+        width: 50%;
+    }
+
+    .reporting-modules-container {
+        justify-content: center;
+    }
+
+    .reporting-module {
+        flex-basis: 85%;
+        margin-left: 0 !important;
+        margin-bottom: 1rem;
+    }
+
+    .reporting-module-apex-chart > div {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .reporting-module > div > h1 {
+        font-size: 2.074rem;
+        font-weight: bold;
+    }
+
+    .reporting-module-apex-chart > div > h5 {
+        font-size: 1rem;
+    }
+
+    .reporting-module-apex-chart > div > div {
+        margin-right: 0;
+    }
+}

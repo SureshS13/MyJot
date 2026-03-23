@@ -40,14 +40,15 @@
                     <button type="button" class="btn btn-outline-dark active" id="general-settings-button">General Settings</button>
                     <button type="button" class="btn btn-outline-dark" id="custom-meals-button">Custom Meals</button>
                     <button type="button" class="btn btn-outline-dark" id="exercise-routines-button">Exercise Routines</button>
+                    <button type="button" class="btn btn-outline-dark" id="daily-goals-button">Daily Goals</button>
                 </div>
             </div>
             <div class="col-12 col-xl-9">
                 <div class="d-flex flex-column align-items-center d-xl-block" id="setting-content">
                     <section class="d-flex flex-column d-xl-block" id="general-settings">
                         <label for="username-input" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username-input" placeholder="Enter a username">
-                        <button type="button" class="btn btn-dark align-self-center" id="confirm-changes-button">Confirm changes</button>
+                        <input type="text" class="form-control setting-input" id="username-input" placeholder="Enter a username">
+                        <button type="button" class="btn btn-dark align-self-center confirm-changes-button">Confirm changes</button>
                     </section>
                     <section class="hide-section" id="custom-meals">
                         <div class="input-group mb-4" id="custom-meals-searchbar">
@@ -90,9 +91,24 @@
                         </table>
                         <button type="button" class="btn btn-outline-dark" id="add-new-exercise-routine-button">Add New Exercise Routine</button>
                     </section>
+                    <section class="hide-section" id="daily-goals">
+                        <label for="daily-calorie-goal-input" class="form-label">Daily Calorie Goal</label>
+                        <input type="number" class="form-control setting-input" id="daily-calorie-goal-input" min="0" placeholder="Enter a daily calorie goal">
+
+                        <label for="daily-protein-goal-input" class="form-label">Daily Protein Goal</label>
+                        <input type="number" class="form-control setting-input" id="daily-protein-goal-input" min="0" placeholder="Enter a daily protein goal">
+
+                        <label for="daily-fats-goal-input" class="form-label">Daily Fats Goal</label>
+                        <input type="number" class="form-control setting-input" id="daily-fats-goal-input" min="0" placeholder="Enter a daily fat goal">
+
+                        <label for="daily-carbs-goal-input" class="form-label">Daily Carbohydrates Goal</label>
+                        <input type="number" class="form-control setting-input" id="daily-carbs-goal-input" min="0" placeholder="Enter a daily carbs goal">
+
+                        <button type="button" class="btn btn-dark align-self-center confirm-changes-button">Confirm changes</button>
+                    </section>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
   </body>
 </html>
