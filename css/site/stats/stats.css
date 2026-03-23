@@ -54,17 +54,17 @@
     overflow: auto;
 }
 
-/*********************************/
+/*******************************************/
 /* Default Reporting Module Spacing Styles */
-/*********************************/
+/*******************************************/
 
 .reporting-module:nth-of-type(even) {
     margin-left: 2%;
 }
 
-/******************************************/
-/* Default Reporting Module Content Styles*/
-/******************************************/
+/*******************************************/
+/* Default Reporting Module Content Styles */
+/*******************************************/
 
 .reporting-module > div {
     width: 80%;
