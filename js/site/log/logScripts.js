@@ -224,9 +224,11 @@ saveDataButton.addEventListener("click", async function() {
 
             // Add the user's macro goal profile information to the log object, if exists and is not null. Else, do not add it to the log object
             const userMacroGoals = await myJotDB.userMacroGoals.get({id: 1});
-            for (const [key, value] of Object.entries(userMacroGoals)) {
-                if (key !== "id" && value !== null) {
-                    logObj[key] = value;
+            if (userMacroGoals) {
+                for (const [key, value] of Object.entries(userMacroGoals)) {
+                    if (key !== "id" && value !== null) {
+                        logObj[key] = value;
+                    }
                 }
             }
             
