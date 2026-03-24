@@ -132,7 +132,7 @@ self.addEventListener("fetch", function(event) {
             
             // Attempt to find a matching cached version of the requested resource
             // If it exists, return it. If not, this resolves to undefined
-            return caches.match(event.request);
+            return caches.match(event.request, { "ignoreSearch": true });
         }
     }
 
